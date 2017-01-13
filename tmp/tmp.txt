@@ -1,0 +1,10 @@
+182
+SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '() set order_amt='1582',minutes_need='1097' where id='46'' at line 1
+182
+SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '() set order_amt='1569',minutes_need='1085' where id='47'' at line 1
+105
+SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'order_room' cannot be null
+105
+SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'order_room' cannot be null
+105
+SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'order_room' cannot be null

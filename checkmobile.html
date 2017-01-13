@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <title>汇至美家</title>
+    <link rel="stylesheet" href="./style/weui.min.css"/>
+    <link rel="stylesheet" href="./style/mayhomer.css"/>
+    <script src="./js/zepto.min.js"></script>
+</head>
+
+<body bgcolor="#f3f3f5">
+
+<div class="weui-flex">
+    <div><div class="back"><a href="/wxphp/index.php"><img src="./images/back.png" style="width:20px;height: 15px;vertical-align: middle;"></a></div></div>
+    <div class="weui-flex__item"><div class="titlename" id ="productname">手机号验证</div></div>
+</div>
+<div class="weui-grids" id="checkmobile">
+    <div class="checkblank"></div>
+    <div class="checkmobileinput">
+        <input class="weui-input" type="text" id="tel" pattern="[0-9]*" placeholder="请输入手机号">
+    </div>
+
+    <div class="checkmobilecell">
+        <div class="checkmobileinput2">
+            <input class="weui-input" type="text" id="number" placeholder="请输入验证码">
+        </div>
+        <div class="checkmobilebtncell">
+            <button type="button" onclick="vrcode()" class="checkmobilebtn">获取验证码</button>
+        </div>
+    </div>
+
+    <div class="checkmobilebtnbar">
+        <a href="javascript:void(0)" onclick="check()" class="checkmobiledealbtn">验  证</a>
+    </div>
+
+    <div class="checkmobilebtnbar">
+        <span style="color:#ff5600;font-weight:bold;display: none" id="tip">验证码不正确</span>
+    </div>
+</div>
+</div>
+
+
+<script type="text/javascript">
+    var timerobj=null
+    var lefttime=60
+    var xmlHttp;
+    function createXMLHttpRequest()
+    {
+        if (window.ActiveXObject)
+        {
+            xmlHttp = new ActiveXObject("Microsoft.XMLHTTp");
+        }
+        else if (window.XMLHttpRequest)
+        {
+            xmlHttp = new XMLHttpRequest();
+        }
+    }
+    function startRequest(href)
+    {
+        createXMLHttpRequest();
+        xmlHttp.onreadystatechange = handleStateChange;
+        xmlHttp.open("GET", href, true);
+        xmlHttp.send(null);
+    }
+
+    function handleStateChange()
+    {
+        if(xmlHttp.readyState == 4)//描述一种"已加载"状态；此时，响应已经被完全接收。
+        {
+            if(xmlHttp.status == 200)//200表示成功收到
+            {
+                //1-成功
+                //2-电话号码不合法
+                //3-短信平台异常
+                var temp = xmlHttp.responseText;
+                if (temp == "1") //成功
+                {
+                    /*
+                    if(window.localStorage)
+                    {
+                        var storage = window.localStorage;
+                        var url=storage["checksuccessurl"];
+                        location.href = url+"?fresh="+Math.random();
+                    }
+                    */
+                }
+                else if (temp == "2")
+                {
+                    errortip("获取验证码失败：请输入有效的手机号码！");
+                }
+                else if (temp == "3")
+                {
+                    errortip("获取验证码失败：短信发送异常，稍候再试！");
+                }
+            }
+        }
+    }
+
+    function vrcode()
+    {
+        $('#tip').hide();
+        var code= $('#tel').val();
+        if (code == "" || code.length != 11)
+        {
+            errortip("请输入合法的手机号码。");
+        }
+        else
+        {
+            $('.checkmobilebtn').attr('disabled',"true");
+            $('.checkmobilebtn').addClass('disable');
+            var tip= '等待60秒';
+            $('.checkmobilebtn').html(tip);
+
+            lefttime=60;
+            timerobj = setInterval("remainTime()",1000);
+            var href='./wxphp/sendvrcode.php?mobile='+code+'&fresh='+Math.random();
+            startRequest(href);
+        }
+    }
+
+    function check()
+    {
+        var tel= $('#tel').val();
+        var vrcode= $('#number').val();
+
+        $.ajax({
+            url:'./wxphp/checkmobile.php?tel='+tel+'&vrcode='+vrcode+'&fresh='+Math.random(),
+            async: false,
+            success:function(data) {
+                var obj = eval("(" + data + ")");
+                var code = obj.code;
+
+                if (obj.code == 100) //手机验证成功
+                {
+                     if(window.localStorage)
+                     {
+                         var storage = window.localStorage;
+                         var url=storage["checksuccessurl"];
+                         location.href = url+"?fresh="+Math.random();
+                     }
+                }
+                else
+                {
+                    errortip(obj.msg);
+                }
+            }
+        });
+    }
+
+    function errortip(tip)
+    {
+        lefttime = 0;
+        clearInterval(timerobj);
+
+        $('#tip').show();
+        $('#tip').html(tip);
+
+        $('.checkmobilebtn').html("获取验证码");
+        $('.checkmobilebtn').removeAttr("disabled");
+        $('.checkmobilebtn').removeClass('disable');
+    }
+
+    function remainTime()
+    {
+        lefttime--;
+        if (lefttime <=0)
+        {
+            clearInterval(timerobj);
+            $('.checkmobilebtn').html("获取验证码");
+            $('.checkmobilebtn').removeAttr("disabled");
+            $('.checkmobilebtn').removeClass('disable');
+        }
+        else
+        {
+            var tip= '等待'+lefttime+'秒';
+            $('.checkmobilebtn').html(tip);
+        }
+    }
+</script>
+</body>
+</html>

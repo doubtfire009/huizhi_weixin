@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <title>汇至美家</title>
+    <link rel="stylesheet" href="./style/weui.min.css"/>
+    <link rel="stylesheet" href="./style/mayhomer.css"/>
+    <script src="./js/zepto.min.js"></script>
+</head>
+
+<body bgcolor="#f3f3f5">
+<div class="weui-navbar ordermenu">
+    <a href="#" class="weui-navbar__item" onclick="vieworder(1)">
+        <p class="weui-tabbar__span">待支付</p>
+    </a>
+    <a href="#" class="weui-navbar__item" onclick="vieworder(2)">
+        <p class="weui-tabbar__span">未完成</p>
+    </a>
+    <a href="#" class="weui-navbar__item" onclick="vieworder(3)">
+        <p class="weui-tabbar__span">已完成</p>
+    </a>
+    <a href="#" class="weui-navbar__item weui-bar__item_on" onclick="vieworder(4)">
+        <p class="weui-tabbar__span">全部</p>
+    </a>
+</div>
+
+<div style="overflow:scroll;margin-bottom: 3em;" id="orderlist">
+
+</div>
+
+<div class="weui-tab">
+    <div class="weui-tabbar">
+        <a href="/wxphp/index.php" class="weui-tabbar__item">
+            <img src="../images/icon_indextab1.png" id="img1" alt="" class="weui-tabbar__icon">
+            <p class="weui-tabbar__label">主页</p>
+        </a>
+        <a href="/order.html" class="weui-tabbar__item weui-bar__item_on">
+            <img src="../images/icon_indextab2_on.png" id="img2" alt="" class="weui-tabbar__icon">
+            <p class="weui-tabbar__label">订单</p>
+        </a>
+        <a href="/vip.html" class="weui-tabbar__item">
+            <img src="../images/icon_indextab3.png" id="img3" alt="" class="weui-tabbar__icon">
+            <p class="weui-tabbar__label">会员</p>
+        </a>
+        <a href="/my.html" class="weui-tabbar__item">
+            <img src="../images/icon_indextab4.png" id="img4" alt="" class="weui-tabbar__icon">
+            <p class="weui-tabbar__label">我的</p>
+        </a>
+    </div>
+</div>
+
+<script type="text/javascript">
+    <!-- 初始时请求后台 -->
+
+    vieworder(4);
+
+    function vieworder(type)
+    {
+        $('#orderlist').html('');
+
+        $.ajax({
+            url:'./wxphp/order.php?fresh='+Math.random()+"&type="+type,
+            async: false,
+            cache:false,
+            success:function(data) {
+                var obj = eval("(" + data + ")");
+                console.log(obj);
+                if (obj.code == 200) //手机验证
+                {
+                    //保存验证界面前的界面
+                    if(window.localStorage)
+                    {
+                        var storage = window.localStorage;
+                        //写入
+                        storage["checksuccessurl"] = './order.html';
+                    }
+
+                    location.href = "./checkmobile.html"+"?fresh="+Math.random();
+                }
+                else if (obj.code == 100) //成功
+                {
+                    var orderlist = obj.orderlist;
+                    if (orderlist.length <= 0)
+                    {
+                        var html='\
+                                <div class="weui-form-preview orderbody">\
+                                <div style="padding: 10px 15px;font-size: 1.2em;text-align: center;color: #222;line-height: 5em;">\
+                                暂无订单信息\
+                                </div>\
+                                </div>';
+                        $('#orderlist').html(html);
+                    }
+                    for(var i in orderlist) {
+                        var each = orderlist[i];
+                        var orderid = each.orderid;
+                        var order_status = each.order_status;
+                        var date_created = each.date_created;
+                        var payment_paid = each.payment_paid;
+                        var payment_need = each.payment_need;
+                        var catname = each.catname;
+
+                        var paybtn ='\
+                            <div class="bottom_flex_item_div paybtn">\
+                                <a href="javascript:void(0)" onclick="pay('+orderid+')" class="bottom_btn orderpay">立即支付</a>\
+                                </div>';
+                        var tip = "待付款";
+                        var price = payment_need;
+                        if (order_status != "待支付")
+                        {
+                            paybtn = "";
+                            price = payment_paid;
+                            tip = "实收款";
+                        }
+
+                        var skulist = each.sku_list;
+                        var skuitem="";
+                        for(var k in skulist)
+                        {
+                            var eacksku = skulist[k];
+                            var skuname = eacksku.sku_name;
+                            var skunums = eacksku.product_num;
+
+                            var item ='\
+                                <div class="weui-form-preview__item skudetail">\
+                                <label class="weui-form-preview__label">'+skuname+'X'+skunums+'</label>\
+                                </div>';
+                            skuitem += item;
+                        }
+
+                        var order='\
+                                <div class="weui-form-preview orderbody">\
+                                <a href="javascript:void(0);" onclick="viewdetail('+orderid+')">\
+                                    <div class="weui-form-preview__bd orderhead">\
+                                        <div class="orderstatus">\
+                                            <div class="weui-media-box__bd catname">\
+                                                <h4 class="weui-media-box__title catename"><b>'+catname+'</b></h4>\
+                                                <p class="weui-media-box__desc ordertime">'+date_created+'</p>\
+                                            </div>\
+                                            <div class="weui-cells_checkbox paystatus">\
+                                                <div class="paystatus">'+order_status+'</div>\
+                                            </div>\
+                                        </div>\
+                                    </div>\
+                                    <div class="weui-form-preview__bd skulist" id="skulist">\
+                                    '+skuitem+'\
+                                    </div>\
+                                    <div class="weui-form-preview__hd total2">\
+                                        <div style="color:#222;float: left;">\
+                                        <span><b>'+tip+'： </b></span><span class="lightfont" id="totalprice">¥'+price+'</span>\
+                                        </div>\
+                                        '+paybtn+'\
+                                    </div>\
+                                </a>\
+                                </div> \
+                            ';
+                        $('#orderlist').append(order);
+                    }
+                }
+            }
+        });
+    }
+
+    <!--手动点击tab-->
+    $(function(){
+        $('.weui-navbar__item').on('click', function () {
+            skutabindex = $(this).index();
+            $(this).addClass('weui-bar__item_on').siblings('.weui-bar__item_on').removeClass('weui-bar__item_on');
+        });
+    });
+
+    //支付按钮
+    function pay(orderid)
+    {
+        if(window.localStorage)
+        {
+            var storage = window.localStorage;
+            storage["orderid"] = orderid;
+        }
+        location.href = "/wxphp/paytest/jsapi.php?orderid="+orderid;
+    }
+
+    //订单详情链接
+    function viewdetail(orderid)
+    {
+        if(window.localStorage)
+        {
+            var storage = window.localStorage;
+            storage["orderid"] = orderid;
+        }
+        location.href = "./orderdetail.html"+"?fresh="+Math.random();
+    }
+</script>
+
+</body>
+</html>

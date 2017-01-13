@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <title>汇至美家</title>
+    <link rel="stylesheet" href="./style/weui.min.css"/>
+    <link rel="stylesheet" href="./style/mayhomer.css"/>
+    <script src="./js/zepto.min.js"></script>
+</head>
+
+<body bgcolor="#f3f3f5">
+
+<div class="weui-flex">
+    <div><div class="back"><a href="javascript:window.history.go(-1)"><img src="./images/back.png" style="width:20px;height: 15px;vertical-align: middle;"></a></div></div>
+    <div class="weui-flex__item"><div class="titlename" id ="titlename">服务地址</div></div>
+</div>
+
+<div id="addresslist">
+
+</div>
+<div class="weui-cells orderaddrcells">
+    <a class="weui-cell weui-cell_access" href="javascript:;" onclick="newaddress()">
+        <div class="weui-cell__bd addaddr">
+            <img src="./images/lbs2.png" style="width:16px;height:21px;margin-right:0.7em;vertical-align: middle;"> <span>新增地址</span>
+        </div>
+        <div class="weui-cell__ft">
+        </div>
+    </a>
+</div>
+
+<script type="text/javascript">
+    <!-- 初始时请求后台 -->
+    var addresslist = new Array();
+
+    $.ajax({
+        url:'./wxphp/address.php?fresh='+Math.random(),
+        async: false,
+        cache:false,
+        success:function(data) {
+            var obj = eval("(" + data + ")");
+
+            addresslist = obj.address_list;
+            var len = addresslist.length;
+            for (var i=0;i<len;i++)
+            {
+                var id = addresslist[i].id;
+                var city = addresslist[i].city;
+                var zonename = addresslist[i].zonename;
+                var address = addresslist[i].address;
+                var main_addr = addresslist[i].main_addr;
+                var name = addresslist[i].name;
+                var phone = addresslist[i].phone;
+
+                var addr = city+zonename+address;
+                var defaultclass = "orderaddrcells2";
+                if (main_addr == 1)
+                {
+                    defaultclass = "orderaddrcellsdefault";
+                }
+                var item = '\
+                    <div class="weui-cells '+defaultclass+'"> \
+                    <a class="weui-cell weui-cell_access" href="javascript:;" onclick="clickaddr('+id+')">\
+                        <div class="weui-cell__bd addaddr">\
+                        '+name+' '+phone+'<br>\
+                        '+addr+'\
+                        </div>\
+                        </a>\
+                        </div>\
+                        ';
+                $("#addresslist").append(item);
+            }
+        }
+    });
+
+    //点击一个地址
+    function clickaddr(addrid)
+    {
+        var action,orderid;
+        if(window.localStorage && addrid>0)
+        {
+            var storage = window.localStorage;
+            action = storage["addressaction"];
+            orderid = storage["orderid"];
+        }
+
+        if (action == "choice") //此时是重新选择订单地址
+        {
+            $.ajax({
+                url:'./wxphp/updateorderaddress.php?fresh='+Math.random()+'&addrid='+addrid+'&orderid='+orderid,
+                async: false,
+                cache:false,
+                success:function(data) {
+                    location.href = "./ordersure.html"+"?fresh="+Math.random();
+                }
+            });
+        }
+        if (action == "view")
+        {
+            location.href = "./editaddress.html"+"?fresh="+Math.random();
+        }
+    }
+
+    //点击新增地址
+    function newaddress()
+    {
+        if(window.localStorage)
+        {
+            var storage = window.localStorage;
+            //写入
+            storage["addreditaction"] = "add";
+        }
+        location.href = "./editaddress.html"+"?fresh="+Math.random();
+    }
+
+</script>
+
+</body>
+</html>

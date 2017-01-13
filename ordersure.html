@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <title>汇至美家</title>
+    <link rel="stylesheet" href="./style/weui.min.css"/>
+    <link rel="stylesheet" href="./style/mayhomer.css"/>
+    <link rel="stylesheet" href="./style/calendar.css"/>
+    <style type="text/css">
+        ul, ol, li {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+    </style>
+    <script src="./js/zepto.min.js"></script>
+</head>
+
+<body bgcolor="#f3f3f5">
+<div class="weui-flex">
+    <div><div class="back"><a href="./order.html"><img src="./images/back.png" style="width:20px;height: 15px;vertical-align: middle;"></a></div></div>
+    <div class="weui-flex__item"><div class="titlename" id ="titlename">订单确认</div></div>
+</div>
+
+<div class="weui-form-preview">
+    <div class="weui-form-preview__hd">
+        <div class="weui-form-preview__item">
+            <label class="weui-form-preview__label"><b>支付账单</b></label>
+        </div>
+    </div>
+    <div class="weui-form-preview__bd" id="skulist">
+
+    </div>
+    <div class="weui-form-preview__hd">
+        <div class="weui-form-preview__item">
+            <label class="weui-form-preview__label"></label>
+            <span><b>总金额：</b></span><span class="lightfont" id="totalprice"></span>
+        </div>
+    </div>
+</div>
+<div class="weui-cells ordercells">
+    <a class="weui-cell weui-cell_access" href="javascript:;">
+        <div class="weui-cell__bd">
+            <b>优惠劵</b>
+        </div>
+        <div class="weui-cell__ft">
+            <span class="lightfont small" id="coupon">50元优惠劵</span>
+        </div>
+    </a>
+</div>
+
+<div class="weui-cell weui-cell_switch ordercells">
+    <div class="weui-cell__bd">
+        <b>积分折扣</b>
+    </div>
+    <div class="weui-cell__ft fixwidth">
+        <span id="points">已有3000积分</span>
+        <label for="switchCP" class="weui-switch-cp">
+            <input id="switchCP" class="weui-switch-cp__input" type="checkbox" disabled=false>
+            <div class="weui-switch-cp__box switch"></div>
+        </label>
+    </div>
+</div>
+
+<div class="weui-cells ordercells">
+    <a class="weui-cell weui-cell_access" href="javascript:;" onclick="choiceaddr()">
+        <div class="weui-cell__bd">
+            <b>服务地址</b>
+        </div>
+        <div class="weui-cell__ft fixwidth">
+            <span id="address">请选择服务地址</span>
+        </div>
+    </a>
+</div>
+
+<div class="weui-cells ordercells bottom">
+    <a class="weui-cell weui-cell_access" href="javascript:;" onclick="clickdate()">
+        <div class="weui-cell__bd">
+            <b>服务时间</b>
+        </div>
+        <div class="weui-cell__ft">
+            <span id="servicetime">请选择服务时间</span>
+        </div>
+    </a>
+</div>
+
+<div class="addresstip">
+    <span style="color:#ff5600;font-weight:bold;display:none" id="tip">选择的服务时间段已经被占用，请重新选择</span>
+</div>
+
+<div class="bottom_flex">
+    <div class="weui-flex__item">
+        <div class="placeholder">
+           <span class="lightfont" id="payneed"></span> <span class="lightfont small"></span>
+        </div>
+    </div>
+    <div class="weui-flex__item"><div class="bottom_flex_item_div">
+        <a href="javascript:void(0)" onclick="buy()" class="bottom_btn">提交订单</a>
+    </div></div>
+</div>
+
+<!-- 底部弹出对话框 -->
+<div id="timedivdlg" style="display: none;">
+    <div class="weui-mask" id="weui-mask"></div>
+    <div class="timediv" id="timediv">
+        <div style="background-color: #fff"><div id="ca"></div></div>
+
+    </div>
+</div>
+<script src="./js/calendar/jquery.js"></script>
+<script src="./js/calendar/calendar.js"></script>
+<script>
+
+    var init = 0;
+    function inittimediv(curdatestr, dataarr, anytimeon)
+    {
+        $('#ca').calendar({
+            width: 320,
+            height: 290,
+            curdate:curdatestr,
+            data: dataarr,
+            onSelected: function (view, date, data) {
+
+                choicedate = date;
+
+                if (init == 0)
+                {
+                    init = 1;
+
+                    var item = '\
+                    <div class="weui-tab" id="weui-tab">\
+                    <div class="timediv_bar" id="deal_btn2">\
+                        <div class="weui-flex__timeitem"><a href="javascript:void(0)" id="morning" class="time_btn" onclick="clicktime(1)">上午<span style="display:block;">8:30-11:30</span></a></div>\
+                        <div class="weui-flex__timeitem"><a href="javascript:void(0)" id="afternoon" class="time_btn" onclick="clicktime(2)">下午<span style="display:block;">13:00-17:00</span></a></div>\
+                        <div class="weui-flex__timeitem"><a href="javascript:void(0)" id="night" class="time_btn" onclick="clicktime(3)">晚上<span style="display:block;">约满</span></a></div>\
+                    </div>\
+                    </div>';
+                    if (anytimeon == 1)
+                    {
+                        item = '\
+                        <div class="weui-tab" id="weui-tab">\
+                        <div class="timediv_bar" id="deal_btn2">\
+                            <div class="weui-flex__timeitem"><a href="javascript:void(0)" id="morning" class="time_btn" onclick="clicktime(1)">上午<span style="display:block;">8:30-11:30</span></a></div>\
+                            <div class="weui-flex__timeitem"><a href="javascript:void(0)" id="afternoon" class="time_btn" onclick="clicktime(2)">下午<span style="display:block;">13:00-17:00</span></a></div>\
+                            <div class="weui-flex__timeitem"><a href="javascript:void(0)" id="night" class="time_btn" onclick="clicktime(3)">晚上<span style="display:block;">约满</span></a></div>\
+                            <div class="weui-flex__timeitem"><a href="javascript:void(0)" id="anytime" class="time_btn" onclick="clicktime(4)"><span style="vertical-align:middle;display:table-cell;height: 4em;width: 7em;">任意</span></a></div>\
+                        </div>\
+                        </div>';
+                    }
+                    $('#timediv').append(item);
+                }
+                else
+                {
+                    $('#weui-tab').fadeIn(100);
+                }
+                $("#timediv").css("height", "360px");
+
+                //改变按钮状态
+                changevalidtime(date);
+            }
+        });
+    }
+
+    <!-- 初始时请求后台 -->
+    var orderid, zoneid;
+    if(window.localStorage)
+    {
+        var storage = window.localStorage;
+        orderid = storage["orderid"];
+    }
+
+    var timelist = [];
+    var anytimeon = 0; //是否考虑任意时段
+    var choicedate, choicetimeinfo;
+    $.ajax({
+        url:'./wxphp/ordersure.php?fresh='+Math.random()+"&orderid="+orderid,
+        async: false,
+        cache:false,
+        success:function(data)
+        {
+            var obj = eval("(" + data + ")");
+
+            $('#coupon').html("");
+            $('#points').html("");
+
+            var city="上海市";
+            zoneid = obj.zoneid;
+            var zonename = obj.zonename;
+            var address = obj.address;
+            var room = obj.room;
+            var name = obj.name;
+            var phone = obj.phone;
+            var payneed = obj.payneed;
+
+            $('#address').html(name+' '+phone+'<br><span style="text-align: right;float: right">'+city+zonename+address+room+'</span>');
+            $('#payneed').html('¥'+payneed);
+            $('#totalprice').html('¥'+payneed);
+
+            var skulist = obj.sku_list;
+            for(var i in skulist)
+            {
+                var each = skulist[i];
+                var skuname = each.sku_name;
+                var skunums = each.product_num;
+                var skuprice = each.product_price;
+
+                var item ='\
+                       <div class="weui-form-preview__item">\
+                            <label class="weui-form-preview__label">'+skuname+'X'+skunums+'</label>\
+                            <span class="weui-form-preview__value">¥'+skuprice+'</span>\
+                        </div>';
+                $('#skulist').append(item);
+            }
+
+            //操作时间
+            var curdatestr = "";
+            var dataarr = [];
+            var schedule_date = obj.schedule_date;
+            var schedule_timeinfo = obj.schedule_timeinfo;
+            anytimeon = Number(obj.anytimeon);
+            if (schedule_date != null && schedule_date != "")
+            {
+                setchoicetime(schedule_date, Number(schedule_timeinfo));
+
+                curdatestr = new Date(schedule_date);
+            }
+
+            //{"date":"2017-02-01","morning":0,"afternoon":0,"night":0,"anytime":0}
+            timelist = jQuery.parseJSON(obj.timelist)
+            var jsonstr = '[';
+            for(var i in timelist)
+            {
+                var each = timelist[i];
+                var date = each.date;
+                var morning = Number(each.morning);
+                var afternoon = Number(each.afternoon);
+                var night = Number(each.night);
+                var anytime = Number(each.anytime);
+
+                if (anytimeon == 0)
+                {
+                    if (morning == 0 && afternoon == 0 && night == 0)
+                    {
+                        jsonstr += '{"date":"'+date+'","value":"约满"},';
+                    }
+                }
+                else if (anytimeon == 1)
+                {
+                    if (morning == 0 && afternoon == 0 && night == 0 && anytime == 0)
+                    {
+                        jsonstr += '{"date":"'+date+'","value":"约满"},';
+                    }
+                }
+            }
+            jsonstr = jsonstr.substring(0, jsonstr.length-1);
+
+            jsonstr += ']';
+            //console.log(jsonstr);
+
+            dataarr = jQuery.parseJSON(jsonstr);
+            inittimediv(curdatestr, dataarr, anytimeon);
+        }
+    });
+
+    //判断时段选择按钮的状态
+    function changevalidtime(curdate)
+    {
+        var morning, afternoon, night, anytime;
+        for(var i in timelist) {
+            var each = timelist[i];
+            var date = each.date;
+            morning = Number(each.morning);
+            afternoon = Number(each.afternoon);
+            night = Number(each.night);
+            anytime = Number(each.anytime);
+            if (date == curdate)
+            {
+                break;
+            }
+        }
+        $('#morning').removeClass('time_btn_disable');
+        $('#afternoon').removeClass('time_btn_disable');
+        $('#night').removeClass('time_btn_disable');
+        $('#anytime').removeClass('time_btn_disable');
+
+        $('#morning').removeClass('time_btn_current');
+        $('#afternoon').removeClass('time_btn_current');
+        $('#night').removeClass('time_btn_current');
+        $('#anytime').removeClass('time_btn_current');
+
+
+        if (morning <= 0) {
+            $('#morning').addClass('time_btn_disable');
+            $('#morning').html('上午<span style="display:block;">约满</span>');
+        }
+        else {
+            $('#morning').html('上午<span style="display:block;">8:30-11:30</span>');
+        }
+
+        if (afternoon == 0) {
+            $('#afternoon').addClass('time_btn_disable');
+            $('#afternoon').html('下午<span style="display:block;">约满</span>');
+        }
+        else {
+            $('#afternoon').html('下午<span style="display:block;">11:00-17:00</span>');
+        }
+
+        if (night == 0) {
+            $('#night').addClass('time_btn_disable');
+            $('#night').html('晚上<span style="display:block;">约满</span>');
+        }
+        else{
+            $('#night').html('晚上<span style="display:block;">19:00-21:00</span>');
+        }
+
+        if (anytime == 0) {
+            $('#anytime').addClass('time_btn_disable');
+            $('#anytime').html('<span style="vertical-align:middle;display:table-cell;height: 4em;width: 7em;">任意</span><span style="display:block;">约满</span>');
+        }
+        else{
+            $('#anytime').html('<span style="vertical-align:middle;display:table-cell;height: 4em;width: 7em;">任意</span>');
+        }
+    }
+
+    function setchoicetime(schedule_date, schedule_timeinfo)
+    {
+        var servicetime = schedule_date;
+        switch (schedule_timeinfo)
+        {
+            case 0: servicetime +=" 任意时间"; break;
+            case 1: servicetime +=" 上午 8:30-11:30"; break;
+            case 2: servicetime +=" 下午 13:00-17:00"; break;
+            case 3: servicetime +=" 晚上 19:00-21:00"; break;
+        }
+        $('#servicetime').html(servicetime);
+    }
+
+    //点击确认订单按钮,提交选择的时间
+    function buy()
+    {
+        $.ajax({
+            url:'./wxphp/updateordertimeinfo.php?orderid='+orderid+"&choicedate="+choicedate+"&choicetimeinfo="+choicetimeinfo+"&fresh="+Math.random(),
+            async: false,
+            cache:false,
+            success:function(data) {
+                var obj = eval("(" + data + ")");
+
+                if (obj.code == 200) //发生错误
+                {
+                    errortip('选择的服务时间段已经被占用，请重新选择');
+                }
+                else
+                {
+                    location.href = "/wxphp/paytest/jsapi.php?orderid="+orderid;
+                }
+            }
+        });
+    }
+
+    function errortip(tip)
+    {
+        $('#tip').show();
+        $('#tip').html(tip);
+        setTimeout(cleartip,5000);
+    }
+
+    function cleartip()
+    {
+        $('#tip').hide();
+    }
+
+    <!--关闭timediv-->
+    $(function(){
+        $('.weui-mask').on('click', function () {
+            $('#timedivdlg').fadeOut(100);
+        });
+    });
+
+    function choiceaddr()
+    {
+        if(window.localStorage)
+        {
+            var storage = window.localStorage;
+            storage["addressaction"] = "choice";
+        }
+
+        location.href = "./address.html"+"?fresh="+Math.random();
+    }
+
+    function clickdate()
+    {
+        $('#weui-tab').fadeOut(100);
+        $('#timedivdlg').fadeIn(100);
+        $("#timediv").css("height", "290px");
+    }
+
+    function clicktime(type)
+    {
+        choicetimeinfo = type;
+        var idstr
+        switch(type)
+        {
+            case 1:idstr="#morning";break;
+            case 2:idstr="#afternoon";break;
+            case 3:idstr="#night";break;
+            case 4:idstr="#anytime";break;
+        }
+
+        var classname = $(idstr).attr('class');
+        if (classname.indexOf('time_btn_disable') > 0)
+        {
+            return;
+        }
+
+        $('.time_btn').removeClass('time_btn_current');
+        $(idstr).addClass('time_btn_current');
+        $('#timedivdlg').fadeOut(100);
+
+        setchoicetime(choicedate, choicetimeinfo);
+    }
+</script>
+
+</body>
+</html>

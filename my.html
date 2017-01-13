@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <title>汇至美家</title>
+    <link rel="stylesheet" href="./style/weui.min.css"/>
+    <link rel="stylesheet" href="./style/mayhomer.css"/>
+    <script src="./js/zepto.min.js"></script>
+</head>
+
+<body bgcolor="#f3f3f5">
+<div id="addresslist">
+
+</div>
+<div class="weui-cells orderaddrcells">
+    <a class="weui-cell weui-cell_access" href="javascript:;" onclick="newaddress()">
+        <div class="weui-cell__bd addaddr">
+            <img src="./images/lbs2.png" style="width:16px;height:21px;margin-right:0.7em;vertical-align: middle;"> <span>新增地址</span>
+        </div>
+        <div class="weui-cell__ft">
+        </div>
+    </a>
+</div>
+
+<div class="weui-tab">
+    <div class="weui-tabbar">
+        <a href="/wxphp/index.php" class="weui-tabbar__item">
+            <img src="../images/icon_indextab1.png" id="img1" alt="" class="weui-tabbar__icon">
+            <p class="weui-tabbar__label">主页</p>
+        </a>
+        <a href="/order.html" class="weui-tabbar__item">
+            <img src="../images/icon_indextab2.png" id="img2" alt="" class="weui-tabbar__icon">
+            <p class="weui-tabbar__label">订单</p>
+        </a>
+        <a href="/vip.html" class="weui-tabbar__item">
+            <img src="../images/icon_indextab3.png" id="img3" alt="" class="weui-tabbar__icon">
+            <p class="weui-tabbar__label">会员</p>
+        </a>
+        <a href="/my.html" class="weui-tabbar__item weui-bar__item_on">
+            <img src="../images/icon_indextab4_on.png" id="img4" alt="" class="weui-tabbar__icon">
+            <p class="weui-tabbar__label">我的</p>
+        </a>
+    </div>
+</div>
+
+<script type="text/javascript">
+    <!-- 初始时请求后台 -->
+    $.ajax({
+        url:'./wxphp/my.php?fresh='+Math.random(),
+        async: false,
+        cache:false,
+        success:function(data) {
+            var obj = eval("(" + data + ")");
+            console.log(obj);
+            if (obj.code == 200) //手机验证
+            {
+                //保存验证界面前的界面
+                if(window.localStorage)
+                {
+                    var storage = window.localStorage;
+                    //写入
+                    storage["checksuccessurl"] = './my.html';
+                }
+
+                location.href = "./checkmobile.html"+"?fresh="+Math.random();
+            }
+            else if (obj.code == 100)
+            {
+                var addresslist = new Array();
+                if(window.localStorage)
+                {
+                    var storage = window.localStorage;
+                    storage["addressaction"] = "view";
+                    storage["addreditaction"] = "modify";
+                }
+
+                $.ajax({
+                    url:'./wxphp/address.php?fresh='+Math.random(),
+                    async: false,
+                    cache:false,
+                    success:function(data) {
+                        var obj = eval("(" + data + ")");
+
+                        addresslist = obj.address_list;
+                        var len = addresslist.length;
+                        for (var i=0;i<len;i++)
+                        {
+                            var id = addresslist[i].id;
+                            var city = addresslist[i].city;
+                            var zonename = addresslist[i].zonename;
+                            var address = addresslist[i].address;
+                            var main_addr = addresslist[i].main_addr;
+                            var name = addresslist[i].name;
+                            var phone = addresslist[i].phone;
+
+                            var addr = city+zonename+address;
+                            var defaultclass = "orderaddrcells2";
+                            if (main_addr == 1)
+                            {
+                                defaultclass = "orderaddrcellsdefault";
+                            }
+                            var item = '\
+                            <div class="weui-cells '+defaultclass+'"> \
+                            <a class="weui-cell weui-cell_access" href="javascript:;" onclick="clickaddr('+id+')">\
+                                <div class="weui-cell__bd addaddr">\
+                                '+name+' '+phone+'<br>\
+                                '+addr+'\
+                                </div>\
+                                </a>\
+                                </div>\
+                        ';
+                            $("#addresslist").append(item);
+                        }
+                    }
+                });
+            }
+        }
+    });
+
+    //点击一个地址
+    function clickaddr(addrid)
+    {
+        var action;
+        if(window.localStorage && addrid>0)
+        {
+            var storage = window.localStorage;
+            action = storage["addressaction"];
+            storage["addrid"] = addrid;
+        }
+
+        if (action == "view")
+        {
+            location.href = "./editaddress.html"+"?fresh="+Math.random();
+        }
+    }
+
+    //点击新增地址
+    function newaddress()
+    {
+        if(window.localStorage)
+        {
+            var storage = window.localStorage;
+            //写入
+            storage["addreditaction"] = "add";
+        }
+        location.href = "./editaddress.html"+"?fresh="+Math.random();
+    }
+
+    <!--手动点击tab-->
+    $(function(){
+        $('.weui-navbar__item').on('click', function () {
+            skutabindex = $(this).index();
+            $(this).addClass('weui-bar__item_on').siblings('.weui-bar__item_on').removeClass('weui-bar__item_on');
+        });
+    });
+</script>
+
+</body>
+</html>

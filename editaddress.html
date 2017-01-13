@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <title>汇至美家</title>
+    <link rel="stylesheet" href="./style/weui.min.css"/>
+    <link rel="stylesheet" href="./style/mayhomer.css"/>
+    <script src="./js/zepto.min.js"></script>
+</head>
+
+<body bgcolor="#f3f3f5">
+<div class="weui-flex">
+    <div><div class="back"><a href="javascript:window.history.go(-1)"><img src="./images/back.png" style="width:20px;height: 15px;vertical-align: middle;"></a></div></div>
+    <div class="weui-flex__item"><div class="titlename" id ="titlename">编辑地址</div></div>
+</div>
+
+<div class="weui-form-preview">
+    <div class="weui-form-preview__hd orderaddrtip">
+        <img src="./images/tip.png" style="width:15px;height:15px;margin-right:0.7em;vertical-align: middle;">为了给你更好的服务，请认真填写如下信息！
+    </div>
+
+    <div class="weui-form-preview__hd">
+        <div class="weui-cell cell_item">
+            <div class="weui-cell__hd"><label class="weui-label left">姓名：</label></div>
+            <div class="weui-cell__bd">
+                <input class="weui-input" type="text" placeholder="请输入姓名" id="name">
+            </div>
+        </div>
+    </div>
+
+    <div class="weui-form-preview__hd">
+        <div class="weui-cell cell_item">
+            <div class="weui-cell__hd"><label class="weui-label left">电话：</label></div>
+            <div class="weui-cell__bd">
+                <input class="weui-input" type="text" placeholder="请输入手机号码" id="phone">
+            </div>
+        </div>
+    </div>
+
+    <div class="weui-form-preview__hd">
+        <a class="weui-cell weui-cell_access choicecity" href="javascript:;">
+        <div class="weui-cell cell_item">
+            <div class="weui-cell__hd"><label class="weui-label left">所在地区：</label></div>
+            <div class="weui-cell__bd">
+                <input class="weui-input" type="text" id="zone" placeholder="上海 请选择地区" onclick="viewzonediv();">
+            </div>
+        </div>
+        </a>
+    </div>
+
+    <div class="weui-form-preview__hd">
+        <div class="weui-cell cell_item">
+            <div class="weui-cell__hd"><label class="weui-label left">详细地址：</label></div>
+            <div class="weui-cell__bd">
+                <input class="weui-input" type="text" placeholder="请输入您的小区或大厦名称" id="address">
+            </div>
+        </div>
+    </div>
+
+    <div class="weui-form-preview__hd">
+        <div class="weui-cell cell_item">
+            <div class="weui-cell__hd"><label class="weui-label left">楼层门牌：</label></div>
+            <div class="weui-cell__bd">
+                <input class="weui-input" type="text" placeholder="例如：8号楼808室" id="room">
+            </div>
+        </div>
+    </div>
+
+    <div class="weui-form-preview__hd btn">
+        <div class="weui-cell cell_item">
+            <div class="skudiv_bar btn">
+                <a href="javascript:void(0)" onclick="sure()" class="deal_btn2 deal_btn_current">完成</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="addresstip">
+        <span style="color:#ff5600;font-weight:bold;display:none" id="tip"></span>
+    </div>
+</div>
+
+<div class="js_dialog" id="addrdialog" style="display: none">
+    <div class="weui-mask"></div>
+    <div class="weui-dialog">
+        <div class="weui-cells_checkbox choiceaddr" id="zonelist">
+
+        </div>
+        <div class="weui-dialog__ft">
+            <a href="javascript:void(0)" onclick="closezonediv()" class="weui-dialog__btn weui-dialog__btn_default">取消</a>
+            <a href="javascript:void(0)" onclick="surezonediv()" class="weui-dialog__btn weui-dialog__btn_primary">确定</a>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    <!-- 初始时请求后台 -->
+    var addreditaction, addrid;
+    if(window.localStorage)
+    {
+        var storage = window.localStorage;
+        addreditaction = storage["addreditaction"];
+        if (addreditaction == "add")
+        {
+            $('#titlename').html("新加地址");
+        }
+        else if (addreditaction == "modify")
+        {
+            $('#titlename').html("编辑地址");
+            addrid = storage["addrid"];
+        }
+    }
+
+    var addridstr = "";
+    var choicezone;
+    if (addrid > 0)
+    {
+        addridstr = "&addrid="+addrid;
+    }
+
+    var zonelist;
+    $.ajax({
+        url:'./wxphp/viewaddress.php?fresh='+Math.random()+addridstr,
+        async: false,
+        cache:false,
+        success:function(data) {
+            var obj = eval("(" + data + ")");
+
+            choicezone = obj.zone;
+            var address = obj.address;
+            var room = obj.room;
+            var name = obj.name;
+            var phone = obj.phone;
+            zonelist = obj.zonelist;
+
+            if (name != null)
+            {
+                $("#name").val(name);
+            }
+            if (phone != null)
+            {
+                $("#phone").val(phone);
+            }
+            if (address != null)
+            {
+                $("#address").val(address);
+            }
+            if (room != null)
+            {
+                $("#room").val(room);
+            }
+
+            var key,value;
+            var i = 0
+            for (key in zonelist)
+            {
+                i++;
+                value = zonelist[key];
+                var checked ='';
+                if (choicezone != null)
+                {
+                    if (choicezone == key)
+                    {
+                        checked ='checked="checked"';
+                        $('#zone').val("上海市 "+value);
+                    }
+                }
+                else
+                {
+                    if (i == 1)
+                    {
+                        checked ='checked="checked"';
+                    }
+                }
+
+                var skey = 's'+key;
+                var item = '<label class="weui-cell weui-check__label" for="'+skey+'">\
+                        <div class="weui-cell__hd radio">\
+                        <input type="radio" class="weui-check" name="checkbox1" value="'+key+'" id="'+skey+'" '+checked+'>\
+                        <i class="weui-icon-checked checked"></i>\
+                        </div>\
+                        <div class="weui-cell__bd region">\
+                        <p>'+value+'</p>\
+                        </div>\
+                        </label>\
+                        ';
+                $("#zonelist").append(item);
+            }
+        }
+    });
+
+    //显示区域选择框
+    function viewzonediv()
+    {
+        $("#addrdialog").fadeIn(100);
+    }
+
+    //确定区域选择框
+    function surezonediv()
+    {
+        choicezone = $('input[name="checkbox1"]:checked').val();
+
+        var key,value;
+        for (key in zonelist)
+        {
+            value = zonelist[key];
+            if (key == choicezone)
+            {
+                break;
+            }
+        }
+        if (value != null)
+        {
+            $('#zone').val("上海市 "+value);
+        }
+        closezonediv();
+    }
+
+    //关闭区域选择框
+    function closezonediv()
+    {
+        $("#addrdialog").fadeOut(100);
+    }
+
+    //点击完成按钮
+    function sure()
+    {
+        var name = $('#name').val();
+        var phone = $('#phone').val();
+        var address = $('#address').val()
+        var room = $('#room').val();
+        if (name == "")
+        {
+            errortip("请输入姓名。");
+            return;
+        }
+        else if (phone == "")
+        {
+            errortip("请输入手机号码。");
+            return;
+        }
+        else if (address == "")
+        {
+            errortip("请输入详细地址。");
+            return;
+        }
+        else if (room == "")
+        {
+            errortip("请输入楼层门牌。");
+            return;
+        }
+
+        $.ajax({
+            url: './wxphp/editaddress.php?fresh='+Math.random()+"&name="+name+"&phone="+phone+"&address="+address+"&room="+room+"&choicezone="+choicezone+addridstr,
+            async: false,
+            cache: false,
+            success: function (data) {
+                var obj = eval("(" + data + ")");
+                if (obj.code == 100)
+                {
+                    var action;
+                    if(window.localStorage)
+                    {
+                        var storage = window.localStorage;
+                        action = storage["addressaction"];
+                    }
+                    if (action == 'view')
+                    {
+                        location.href = "./my.html"+"?fresh="+Math.random();
+                    }
+                    else if (action == "choice")
+                    {
+                        location.href = "./address.html"+"?fresh="+Math.random();
+                    }
+                }
+                else if (obj.code == 200)
+                {
+                    alert("选择区域暂未开放服务，尽情期待");
+                }
+            }
+        });
+    }
+    function errortip(tip)
+    {
+        $('#tip').show();
+        $('#tip').html(tip);
+        setTimeout(cleartip,3000);
+    }
+
+    function cleartip()
+    {
+        $('#tip').hide();
+    }
+</script>
+
+</body>
+</html>

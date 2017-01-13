@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <title>汇至美家</title>
+    <link rel="stylesheet" href="./style/weui.min.css"/>
+    <link rel="stylesheet" href="./style/mayhomer.css"/>
+    <script src="./js/zepto.min.js"></script>
+</head>
+
+<body bgcolor="#f3f3f5">
+<div class="weui-flex">
+    <div><div class="back"><a href="./order.html"><img src="./images/back.png" style="width:20px;height: 15px;vertical-align: middle;"></a></div></div>
+    <div class="weui-flex__item"><div class="titlename" id ="titlename">订单详情</div></div>
+</div>
+
+<div class="weui-slider timeline">
+    <div class="weui-slider mandiv">
+        <div style="left:-2%;width: 3%;text-align: center;margin-top: -2.0em;position: absolute;" id="manpos"><img src="./images/stopman.png" style="height:23px;width:auto;" id="man"></div>
+    </div>
+    <div id="sliderInner" class="weui-slider__inner timeline">
+        <div id="sliderTrack" style="width: 0%;" class="weui-slider__track pretime"></div>
+        <div id="sliderHandler1" style="left: 2%;" class="weui-slider__handler dot"></div>
+        <div id="sliderHandler2" style="left: 34%;" class="weui-slider__handler dot"></div>
+        <div id="sliderHandler3" style="left: 68%;" class="weui-slider__handler dot"></div>
+        <div id="sliderHandler4" style="left: 102%;" class="weui-slider__handler dot"></div>
+    </div>
+    <div class="weui-slider pointdiv">
+        <div style="left:-12%;font-size: 1.1em;width: 22%;text-align: center;position: absolute;"><span class="point" id="tip1">支付订单</span></div>
+        <div style="left:22%;font-size: 1.1em;width: 22%;text-align: center;position: absolute;"><span class="point" style="left:20%;" id="tip2">成功派单</span></div>
+        <div style="left:56%;font-size: 1.1em;width: 22%;text-align: center;position: absolute;"><span class="point" style="left:47%;" id="tip3">上门服务</span></div>
+        <div style="left: 90%;font-size: 1.1em;width: 22%;text-align: center;position: absolute;"><span class="point" style="left:77%;" id="tip4">服务完成</span></div>
+    </div>
+    <div class="weui-form-preview__bd orderdetail">
+        <div class="weui-form-preview__item orderdetail">
+            <label style="width:25%;color:#ccc">订单号</label>
+            <label style="font-weight: bold" id="order_no"></label>
+        </div>
+        <div class="weui-form-preview__item orderdetail">
+            <label style="width:25%;color:#ccc">联系人</label>
+            <label style="font-weight: bold" id="contact_name"></label>
+        </div>
+        <div class="weui-form-preview__item orderdetail">
+            <label style="width:25%;color:#ccc">联系电话</label>
+            <label style="font-weight: bold" id="contact_phone"></label>
+        </div>
+        <div class="weui-form-preview__item orderdetail">
+            <label style="width:25%;color:#ccc">服务地址</label>
+            <label style="font-weight: bold" id="addr"></label>
+        </div>
+        <div class="weui-form-preview__item orderdetail">
+            <label style="width:25%;color:#ccc">预约时间</label>
+            <label style="font-weight: bold" id="timeinfo"></label>
+        </div>
+        <div class="weui-form-preview__item orderdetail">
+            <label style="width:25%;color:#ccc">下单时间</label>
+            <label style="font-weight: bold" id="date_created"></label>
+        </div>
+    </div>
+</div>
+
+<div class="weui-slider orderstatus">
+    <div class="weui-form-preview__item orderstatus">
+        <label style="width:5em;color:#ccc">订单状态</label>
+        <label style="font-weight: bold" id="status"></label>
+    </div>
+</div>
+
+<div class="weui-form-preview skulist">
+    <div class="weui-form-preview__bd skuprice" id="skulist">
+
+    </div>
+    <div class="weui-form-preview__hd skuprice">
+        <div class="weui-form-preview__item">
+            <label class="weui-form-preview__label"></label>
+            <span class="lightfont" id="paidprice"></span>
+        </div>
+    </div>
+</div>
+
+<div class="js_dialog" id="lbsdialog" style="display: none">
+    <div class="weui-mask"></div>
+    <div class="review-main">
+        <div class="review-dialog">
+            <div class="weui-dialog__hd tip"><strong class="weui-dialog__title tip">你有一笔订单待评价</strong></div>
+            <div class="weui-dialog__hd tip"><strong class="weui-dialog__title productname">家电清洗</strong></div>
+            <div class="weui-form-preview__bd review">
+                <div class="weui-media-box__hd review">
+                    <img class="weui-media-box__thumb" src="./images/star.png" style="width:1.7em;height:1.7em;vertical-align: middle;">
+                    <img class="weui-media-box__thumb" src="./images/star.png" style="width:1.7em;height:1.7em;vertical-align: middle;">
+                    <img class="weui-media-box__thumb" src="./images/star.png" style="width:1.7em;height:1.7em;vertical-align: middle;">
+                    <img class="weui-media-box__thumb" src="./images/star.png" style="width:1.7em;height:1.7em;vertical-align: middle;">
+                    <img class="weui-media-box__thumb" src="./images/star.png" style="width:1.7em;height:1.7em;vertical-align: middle;">
+                </div>
+                <div class="bottom_flex_item_div review">
+                    <a href="javascript:void(0)" class="bottom_btn review" value="1">准时到达</a>
+                    <a href="javascript:void(0)" class="bottom_btn review" value="2">细致认真</a>
+                </div>
+                <div class="bottom_flex_item_div review">
+                    <a href="javascript:void(0)" class="bottom_btn review" value="3">业务专业</a>
+                    <a href="javascript:void(0)" class="bottom_btn review" value="4">服务态度好</a>
+                </div>
+                <div class="bottom_flex_item_div review">
+                    <a href="javascript:void(0)" class="bottom_btn review" value="5">干净整洁</a>
+                    <a href="javascript:void(0)" class="bottom_btn review" value="6">收费透明</a>
+                </div>
+                <div class="bottom_flex_item_div review2">
+                    <textarea class="weui-textarea review" placeholder="您对此次服务的评价如何？" rows="3"></textarea>
+                </div>
+                <div class="bottom_flex">
+                    <div class="weui-flex__item"><div class="bottom_flex_item_div reviewbtn">
+                        <a href="javascript:void(0)" class="bottom_btn reviewbtn">提交</a>
+                    </div></div>
+                </div>
+            </div>
+        </div>
+        <span class="review-badge" style="position: absolute;top: -0.8em;right: -0.8em;filter: alpha(Opacity=60); -moz-opacity: 0.6;opacity: 0.6;" onclick="closedlg()">X</span>
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    <!-- 初始时请求后台 -->
+    var orderid;
+    if(window.localStorage)
+    {
+        var storage = window.localStorage;
+        orderid = storage["orderid"];
+    }
+    $.ajax({
+        url:'./wxphp/orderdetail.php?fresh='+Math.random()+'&orderid='+orderid,
+        async: false,
+        cache:false,
+        success:function(data) {
+            var obj = eval("(" + data + ")");
+            console.log(obj);
+
+            var order_no = obj.order_no;
+            var order_status = Number(obj.order_status);
+            var status = obj.status;
+            var date_created = obj.date_created;
+            var contact_name = obj.contact_name;
+            var contact_phone = obj.contact_phone;
+            var addr = obj.addr;
+            var timeinfo = obj.timeinfo;
+            var payment_need = obj.payment_need;
+            var payment_paid = obj.payment_paid;
+
+            $('#order_no').html(order_no);
+            $('#contact_name').html(contact_name);
+            $('#contact_phone').html(contact_phone);
+            $('#addr').html(addr);
+            $('#timeinfo').html(timeinfo);
+            $('#date_created').html(date_created);
+            $('#status').html(status);
+            $('#paidprice').html('<b>实付：</b>¥'+payment_paid);
+
+            var skulist = obj.sku_list;
+            for(var k in skulist)
+            {
+                var eacksku = skulist[k];
+                var skuname = eacksku.sku_name;
+                var skunums = eacksku.product_num;
+                var skuprice = eacksku.product_price;
+
+                var item ='\
+                       <div class="weui-form-preview__item skuprice">\
+                        <label class="weui-form-preview__label">'+skuname+'X'+skunums+'</label>\
+                        <span class="weui-form-preview__value">¥'+skuprice+'</span>\
+                        </div>';
+
+                $('#skulist').append(item);
+            }
+            var item ='\
+                       <div class="weui-form-preview__item skuprice">\
+                        <label class="weui-form-preview__label">总金额：</label>\
+                        <span class="weui-form-preview__value">¥'+payment_need+'</span>\
+                        </div>';
+
+            $('#skulist').append(item);
+
+            setman(order_status);
+
+            settimeline(order_status);
+
+            settimetip(order_status);
+
+            setbtn(order_status);
+        }
+    });
+    /*
+     case 0: //待支付订单
+     case 1: //已分配资源订单
+     case 11: //订单等待线下支付
+     case 10: //订单完成支付
+     case 20: //成功派单
+     case 30: //上门服务中
+     case 31: //服务进行中
+     case 90: //未付款取消
+     case 91: //已付款但未派单时取消
+     case 92: //派单后取消
+     case 100: //订单完成且余款结清
+     case 101: //订单完成，用户评价完成
+     case 110: //订单回访完毕
+     */
+    //设置人物动作
+    function setman(order_status)
+    {
+        var pos = "-4.7%";
+        var manimg = "./images/stopman.png";
+        switch(order_status)
+        {
+            case 0:
+            case 1:
+            case 11:
+            case 90:
+                pos = "-2%";
+                manimg = "./images/stopman.png";
+                break;
+            case 10:
+                pos = "14%";
+                manimg = "./images/runman.png";
+                break;
+            case 91:
+                pos = "14%";
+                manimg = "./images/stopman.png";
+                break;
+            case 20:
+                pos = "46%";
+                manimg = "./images/runman.png";
+                break;
+            case 92:
+                pos = "46%";
+                manimg = "./images/stopman.png";
+                break;
+            case 30:
+            case 31:
+                pos = "64%";
+                manimg = "./images/runman.png";
+                break;
+            case 100:
+            case 101:
+            case 100:
+                pos = "98%";
+                manimg = "./images/finishman.png";
+                break;
+        }
+
+        $('#manpos').css("left",pos);
+        $("#man").attr("src", manimg);
+    }
+
+    //设置线条
+    function settimeline(order_status)
+    {
+        $('#sliderHandler1').removeClass('dot_on');
+        $('#sliderHandler2').removeClass('dot_on');
+        $('#sliderHandler3').removeClass('dot_on');
+        $('#sliderHandler4').removeClass('dot_on');
+
+        var pos = "0%";
+        switch(order_status)
+        {
+            case 0:
+            case 1:
+            case 11:
+            case 90:
+                pos = "0%";
+                break;
+            case 10:
+            case 91:
+                $('#sliderHandler1').removeClass('dot');
+                $('#sliderHandler1').addClass('dot_on');
+                pos = "15%";
+                break;
+            case 20:
+            case 92:
+                $('#sliderHandler1').removeClass('dot');
+                $('#sliderHandler1').addClass('dot_on');
+
+                $('#sliderHandler2').removeClass('dot');
+                $('#sliderHandler2').addClass('dot_on');
+                pos = "48%";
+                break;
+            case 30:
+            case 31:
+                $('#sliderHandler1').removeClass('dot');
+                $('#sliderHandler1').addClass('dot_on');
+
+                $('#sliderHandler2').removeClass('dot');
+                $('#sliderHandler2').addClass('dot_on');
+
+                $('#sliderHandler3').removeClass('dot');
+                $('#sliderHandler3').addClass('dot_on');
+                pos = "64%";
+                break;
+            case 100:
+            case 101:
+            case 100:
+                $('#sliderHandler1').removeClass('dot');
+                $('#sliderHandler1').addClass('dot_on');
+
+                $('#sliderHandler2').removeClass('dot');
+                $('#sliderHandler2').addClass('dot_on');
+
+                $('#sliderHandler3').removeClass('dot');
+                $('#sliderHandler3').addClass('dot_on');
+
+                $('#sliderHandler4').removeClass('dot');
+                $('#sliderHandler4').addClass('dot_on');
+                pos = "99%";
+                break;
+        }
+
+        $('#sliderTrack').css('width',pos);
+    }
+
+    //设置提示
+    function settimetip(order_status)
+    {
+        $('#tip1').removeClass('point_on');
+        $('#tip2').removeClass('point_on');
+        $('#tip3').removeClass('point_on');
+        $('#tip4').removeClass('point_on');
+
+        var pos = "0%";
+        switch(order_status)
+        {
+            case 0:
+            case 1:
+            case 11:
+            case 90:
+                break;
+            case 10:
+            case 91:
+                $('#tip1').removeClass('point');
+                $('#tip1').addClass('point_on');
+                break;
+            case 20:
+            case 92:
+                $('#tip1').removeClass('point');
+                $('#tip1').addClass('point_on');
+
+                $('#tip2').removeClass('point');
+                $('#tip2').addClass('point_on');
+                break;
+            case 30:
+            case 31:
+                $('#tip1').removeClass('point');
+                $('#tip1').addClass('point_on');
+
+                $('#tip2').removeClass('point');
+                $('#tip2').addClass('point_on');
+
+                $('#tip3').removeClass('point');
+                $('#tip3').addClass('point_on');
+                break;
+            case 100:
+            case 101:
+            case 100:
+                $('#tip1').removeClass('point');
+                $('#tip1').addClass('point_on');
+
+                $('#tip2').removeClass('point');
+                $('#tip2').addClass('point_on');
+
+                $('#tip3').removeClass('point');
+                $('#tip3').addClass('point_on');
+
+                $('#tip4').removeClass('point');
+                $('#tip4').addClass('point_on');
+                break;
+        }
+    }
+
+    //底部按钮
+    function setbtn(order_status)
+    {
+        var btn="";
+        if (order_status == 10) {
+            btn = '\
+            <div class="bottom_flex">\
+                <div class="weui-flex__item">\
+                    <div class="bottom_flex_item_div">\
+                    <a href="javascript:void(0)" onclick="deal(1)" class="bottom_btn orderchange">更改订单</a>\
+                    </div>\
+                </div>\
+                <div class="weui-flex__item">\
+                    <div class="bottom_flex_item_div">\
+                    <a href="javascript:void(0)" onclick="deal(2)" class="bottom_btn ordercancel">取消订单</a>\
+                    </div>\
+                </div>\
+            </div>\
+                ';
+        }
+        else if (order_status == 0 || order_status == 1)
+        {
+            btn = '\
+            <div class="bottom_flex">\
+                <div class="weui-flex__item">\
+                    <div class="bottom_flex_item_div">\
+                    <a href="javascript:void(0)" onclick="deal(5)" class="bottom_btn orderchange">立即支付</a>\
+                    </div>\
+                </div>\
+                <div class="weui-flex__item">\
+                    <div class="bottom_flex_item_div">\
+                    <a href="javascript:void(0)" onclick="deal(2)" class="bottom_btn ordercancel">取消订单</a>\
+                    </div>\
+                </div>\
+            </div>\
+                ';
+        }
+        else if (order_status == 100)
+        {
+            btn = '\
+            <div class="bottom_flex">\
+                <div class="weui-flex__item">\
+                    <div class="bottom_flex_item_div">\
+                    <a href="javascript:void(0)" onclick="deal(3)" class="bottom_btn ordercomment">评价订单</a>\
+                    </div>\
+                </div>\
+                <div class="weui-flex__item">\
+                    <div class="bottom_flex_item_div">\
+                    <a href="javascript:void(0)" onclick="deal(4)" class="bottom_btn orderagain">再次预约</a>\
+                    </div>\
+                </div>\
+            </div>\
+                ';
+        }
+        $('body').append(btn);
+    }
+
+    function deal(type)
+    {
+        if (type == 1) //更改订单
+        {
+            location.href = "./ordersure.html"+"?fresh="+Math.random();
+        }
+        if (type == 2) //取消订单 对话框提示用户
+        {
+
+        }
+        if (type == 3) //评价订单
+        {
+            var $lbsdialog = $('#lbsdialog');
+            $lbsdialog.fadeIn(200);
+        }
+        if (type == 4) //再次预约
+        {
+            location.href = "/wxphp/index.php";
+        }
+        if (type == 5) //支付订单
+        {
+            location.href = "./orderpay.html"+"?fresh="+Math.random();
+        }
+    }
+
+    /* 评论对话框事件 */
+    function closedlg()
+    {
+        $('#lbsdialog').fadeOut(200);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    var starnums = 5;
+    var reviewarr = new Array(0, 0, 0, 0, 0, 0);
+    $(function()
+    {
+        //输入评语框获得焦点
+        $('.weui-textarea.review').on('click', function () {
+            $(this).css('background-color','#fff');
+        });
+
+        //点击评价项按钮
+        $('.bottom_btn').on('click', function ()
+        {
+            var id = $(this).attr('value');
+            id--;
+            if (id < 0)
+            {
+                id = 0;
+            }
+
+            var classname = $(this).attr('class');
+            if (classname.indexOf('review_on') > 0)
+            {
+                $(this).removeClass('review_on');
+                $(this).addClass('review');
+                reviewarr[id] = 0;
+                return;
+            }
+            if (classname.indexOf('review') > 0 && classname.indexOf('review_on') < 0)
+            {
+                $(this).removeClass('review');
+                $(this).addClass('review_on');
+                reviewarr[id] = 1;
+                return;
+            }
+        });
+
+        //点击星按钮
+        $('.weui-media-box__thumb').on('click', function ()
+        {
+            var id = $(this).index();
+            starnums = id+1;
+
+            $('.weui-media-box__thumb').slice(0,id).attr('src','./images/star_on.png');
+            var preid = id+1;
+            $('.weui-media-box__thumb').slice(preid,5).attr('src','./images/star.png');
+
+            $(this).attr('src','./images/star_on.png');
+        });
+
+        //点击提交按钮
+        $('.bottom_btn.reviewbtn').on('click', function ()
+        {
+            var review = reviewarr[0]+'|'+reviewarr[1]+'|'+reviewarr[2]+'|'+reviewarr[3]+'|'+reviewarr[4]+'|'+reviewarr[5];
+            var comment = $('.weui-textarea.review').val();
+
+            $.ajax({
+                url: './wxphp/orderreview.php?starnums='+starnums+'&orderid='+orderid+'&review='+review+'&comment='+comment,
+                async: false,
+                cache: false,
+                success: function (data)
+                {
+                    var obj = eval("(" + data + ")");
+                    console.log(obj);
+                }
+            });
+            location.href = "./order.html"+"?fresh="+Math.random();
+        });
+
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <title>汇至美家</title>
+    <link rel="stylesheet" href="./style/weui.min.css"/>
+    <link rel="stylesheet" href="./style/mayhomer.css"/>
+    <script src="./js/zepto.min.js"></script>
+</head>
+
+<body bgcolor="#f3f3f5">
+
+
+<div class="weui-flex">
+    <div><div class="left"><a href="./category.html"><img src="./images/back.png" style="width:20px;height: 15px;vertical-align: middle;"></a></div></div>
+    <div class="weui-flex__item"><div class="titlename" id ="productname"></div></div>
+    <div><div class="right"><a href="./shopcart.html">购物车(<span class="cartnums on" id="cartnums">0</span>)</a></div></div>
+</div>
+<div class="productlogo" id="productpic">
+    <img class="weui-media-box__thumb" id="bigimage" src ="" style="width:100px;height: 100px;">
+</div>
+
+<div class="weui-navbar product">
+    <a href="#" class="weui-navbar__item  weui-bar__item_on">
+        <p class="weui-tabbar__span">流程</p>
+    </a>
+    <a href="#" class="weui-navbar__item">
+        <p class="weui-tabbar__span">品质</p>
+    </a>
+    <a href="#" class="weui-navbar__item">
+        <p class="weui-tabbar__span">装备</p>
+    </a>
+    <a href="#" class="weui-navbar__item">
+        <p class="weui-tabbar__span">价格</p>
+    </a>
+    <a href="#" class="weui-navbar__item">
+        <p class="weui-tabbar__span">评价</p>
+    </a>
+</div>
+
+<div class="weui-tab__panel product">
+    <article class="weui-article product" id="sku_article">
+
+    </article>
+</div>
+<div class="weui-tab">
+    <div class="weui-tabbar bottombtn">
+        <a href="javascript:void(0)" onclick="buy(1)" class="deal_btn deal_btn-default">加入购物车</a>
+        <a href="javascript:void(0)" onclick="buy(2)" class="deal_btn deal_btn_current">立刻下单</a>
+    </div>
+</div>
+
+<!-- 底部弹出对话框 -->
+<div id="skudivdlg" style="display: none">
+    <div class="weui-mask"></div>
+    <div class="skudiv">
+
+        <!-- 顶部信息-->
+        <div class="weui-flex">
+            <div class="weui-flex__item">
+                <div class="placeholder3">
+                <span class="skutitle" id="skutitle"></span> <span class="skutip">请选择 机型、数量、清洗程度</span>
+                </div>
+            </div>
+            <div class="placeholder4">
+                <div class="close">
+                <a href="javascript:void(0)" onclick="closediv()">
+                    <img src="./images/close.png" style="width:20px;height:20px;vertical-align: middle;">
+                </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="skuitem">
+            <div class="weui-flex">
+                <div class="placeholder4">机型</div>
+                <div class="weui-flex__item_left">
+                        <div class="weui-flex_right" id = "sku_list">
+                        </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="skuitem">
+            <div class="weui-flex">
+                <div class="placeholder4">数量</div>
+                <div class="weui-flex__item_left">
+                    <div class="weui-flex_right">
+                        <a href="javascript:;" onclick="minusnum()" class="skuitembtn numbtn">-</a>
+                        <span class="sku_nums" id="sku_nums">1</span>
+                        <a href="javascript:;" onclick="addnum()" class="skuitembtn numbtn">+</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="skuitem">
+            <div class="weui-flex">
+                <div class="placeholder4">品牌</div>
+                <div class="weui-flex__item_left">
+                    <div class="weui-flex_right" id = "brand_list">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部按钮-->
+        <div class="weui-tab">
+            <div class="skudiv_bar" id="deal_btn2">
+
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        function closediv()
+        {
+            var $skudivdlg = $('#skudivdlg');
+            $skudivdlg.fadeOut(100);
+        }
+
+        var curbrand, cursku;
+        var minskuminums = 1;
+        var curskuminnums = 1;
+        function buy(type)
+        {
+            var $skudivdlg = $('#skudivdlg');
+            $skudivdlg.fadeIn(100);
+            if (type == 1)
+            {
+                var url = "<a href=\"javascript:void(0)\" onclick=\"buy(3)\" class=\"deal_btn2 deal_btn_current\">加入购物车</a>";
+                $('#deal_btn2').html(url);
+            }
+            if (type == 2)
+            {
+                var url = "<a href=\"javascript:void(0)\" onclick=\"buy(4)\" class=\"deal_btn2 deal_btn_current\">确定</a>";
+                $('#deal_btn2').html(url);
+            }
+            if (type == 3) //加入购物车
+            {
+                var pid;
+                if(window.localStorage)
+                {
+                    var storage=window.localStorage;
+                    pid = storage["productid"];
+                }
+
+                $.ajax({
+                    url:'./wxphp/addshopcart.php?curbrand='+curbrand+"&cursku="+cursku+"&curskuminnums="+curskuminnums+"&productid="+pid+"&fresh="+Math.random(),
+                    async: false,
+                    cache:false,
+                    success:function(data) {
+                        var obj = eval("(" + data + ")");
+
+                        if (obj.code == 200) //手机验证
+                        {
+                            //保存验证界面前的界面
+                            if(window.localStorage)
+                            {
+                                var storage = window.localStorage;
+                                //写入
+                                storage["checksuccessurl"] = './product.html';
+                            }
+
+                            location.href = "./checkmobile.html"+"?fresh="+Math.random();
+                            return;
+                        }
+                        //跳转到购物车
+                        location.href = "./shopcart.html";
+                    }
+                });
+
+                closediv();
+            }
+            if (type == 4) //加入订单
+            {
+                var pid;
+                if(window.localStorage)
+                {
+                    var storage=window.localStorage;
+                    pid = storage["productid"];
+                }
+
+                var request = [];
+                var each = [];
+                each.push(pid);
+                each.push(cursku);
+                each.push(curskuminnums);
+                each.push(curbrand);
+                request.push(each);
+
+                var jsonStr = JSON.stringify(request);
+
+                $.ajax({
+                    url:'./wxphp/addorder.php'+"?fresh="+Math.random(),
+                    type:'POST',
+                    data:'data='+jsonStr,
+                    dataType:'json',
+                    async: false,
+                    cache:false,
+                    success:function(data) {
+                        var obj = data;
+                        if (obj.code == 100 || obj.code == 200)
+                        {
+                            var orderid = obj.order_id;
+                            if(window.localStorage && orderid > 0)
+                            {
+                                var storage = window.localStorage;
+                                //写入
+                                storage["orderid"] = orderid;
+                            }
+                            var action = obj.action;
+                            if(window.localStorage && action != null)
+                            {
+                                var storage = window.localStorage;
+                                //写入
+                                storage["addressaction"] = action;
+                            }
+
+                            if (obj.code == 100) //到添加用户地址页
+                            {
+                                location.href = "./address.html"+"?fresh="+Math.random();
+                            }
+                            if (obj.code == 200) //到订单确认页
+                            {
+                                location.href = "./ordersure.html"+"?fresh="+Math.random();
+                            }
+                        }
+                        if (obj.code == 300) //有错误，返回首页
+                        {
+                            location.href = "/wxphp/index.php?fresh="+Math.random();
+                        }
+                    }
+                });
+                closediv();
+            }
+        } //end buy()
+
+        function choicebrand(brandid)
+        {
+            curbrand = brandid;
+        }
+        function choicesku(skuid, nums)
+        {
+            cursku = skuid;
+            if (nums == null)
+            {
+                nums = 0;
+            }
+            minskuminums = nums;
+            curskuminnums = nums;
+            var str = minskuminums.toString();
+            $("#sku_nums").html(str);
+        }
+
+        function addnum()
+        {
+            curskuminnums++;
+            str = curskuminnums.toString();
+            $("#sku_nums").html(str);
+        }
+        function minusnum()
+        {
+            curskuminnums--;
+            if (curskuminnums < minskuminums)
+            {
+                curskuminnums = minskuminums;
+            }
+            var str = curskuminnums.toString();
+            $("#sku_nums").html(str);
+        }
+
+
+        <!--点击机型按钮-->
+        $(function(){
+            $('.skuitembtn').on('click', function () {
+                $(this).addClass('skuitembtn_on').siblings('.skuitembtn_on').removeClass('skuitembtn_on');
+            });
+        });
+
+        <!--点击品牌按钮-->
+        $(function(){
+            $('.skuitembtn2').on('click', function () {
+                $(this).addClass('skuitembtn2_on').siblings('.skuitembtn2_on').removeClass('skuitembtn2_on');
+            });
+        });
+    </script>
+</div>
+
+
+<script type="text/javascript">
+
+    var skutabindex=0;//默认从第一个tab开始
+
+    <!-- 请求后台 -->
+    var productid, cityid, userid;
+    var content_desc, quality_desc, process_desc, price_desc, comment_desc;
+    if(window.localStorage)
+    {
+        var storage=window.localStorage;
+        productid = storage["productid"];
+        cityid = storage["cityid"];
+    }
+
+    $.ajax({
+        url:'./wxphp/product.php?productid='+productid+"&cityid="+cityid+"&fresh="+Math.random(),
+        async: false,
+        cache:false,
+        success:function(data) {
+            var obj = eval("(" + data + ")");
+
+            var title = obj.title;
+            var cat_id = obj.cat_id;
+            var bigimage = obj.bigimage;
+            content_desc = obj.content;
+            quality_desc = obj.quality_desc;
+            process_desc = obj.process_desc;
+            price_desc = obj.price_desc;
+            comment_desc = "暂无评价";
+            var cart_nums = obj.cart_nums;
+            var brand_list = obj.brand_list;  //格式:1:格力|2:海尔
+            var sku_list = obj.sku_list;
+
+            if (cart_nums == null)
+            {
+                cart_nums = 0;
+            }
+
+            if (cat_id == 1) //判断标题名
+            {
+                if (title != null && title.indexOf("清洗") < 0)
+                {
+                    title += "清洗";
+                }
+            }
+
+            if (cart_nums > 0)
+            {
+                $('.cartnums').addClass('on');
+            }
+            else
+            {
+                $('.cartnums').removeClass('on');
+            }
+
+            $("#bigimage").attr('src',bigimage);
+            $("#productname").html(title);
+            $("#skutitle").html(title);
+            $("#cartnums").html(cart_nums);
+
+            brandlist(brand_list);
+            skulist(sku_list);
+
+            tabclick();
+        }
+    });
+
+    //1:格力|2:海尔|3:海信
+    function brandlist(list)
+    {
+        if (list == null)
+        {
+            return;
+        }
+        var arr = list.split('|');
+        for (var i=0;i<arr.length;i++)
+        {
+            var each = arr[i];
+            var eacharr = each.split(':');
+
+            var brandid = eacharr[0];
+            var brandname = eacharr[1];
+
+            var url="";
+            if (i==0)
+            {
+                url = "<a href=\"javascript:void(0)\" onclick=\"choicebrand("+brandid+")\" class=\"skuitembtn skuitembtn_on\">"+brandname+"</a>";
+            }
+            else
+            {
+                url = "<a href=\"javascript:void(0)\" onclick=\"choicebrand("+brandid+")\" class=\"skuitembtn\">"+brandname+"</a>";
+            }
+            $("#brand_list").append(url);
+        }
+    }
+
+    //1:名称1:最小数量|2:名称2:最小数量|3:名称3:最小数量
+    function skulist(list)
+    {
+        var arr = list.split('|');
+        for (var i=0;i<arr.length;i++)
+        {
+            var each = arr[i];
+            var eacharr = each.split(':');
+
+            var skuid = eacharr[0];
+            var skuname = eacharr[1];
+            var skunums = eacharr[2];
+
+            var url="";
+            if (i==0)
+            {
+                url = "<a href=\"javascript:void(0)\" onclick=\"choicesku("+skuid+","+skunums+")\" class=\"skuitembtn2 skuitembtn2_on\">"+skuname+"</a>"
+                choicesku(skuid, skunums);
+            }
+            else
+            {
+                url = "<a href=\"javascript:void(0)\" onclick=\"choicesku("+skuid+","+skunums+")\" class=\"skuitembtn2\">"+skuname+"</a>";
+            }
+            $("#sku_list").append(url);
+        }
+
+    }
+
+    <!-- TAB的操作，点击和自动切换 -->
+    function tabclick()
+    {
+        if (skutabindex > 4) //最多5个标签，从0开始
+        {
+            skutabindex=4;
+        }
+
+        var curtab = $('.weui-navbar__item');
+        curtab.siblings('.weui-bar__item_on').removeClass('weui-bar__item_on');
+
+        for (i=1;i<=skutabindex;i++)
+        {
+            curtab = curtab.next();
+        }
+        switch (skutabindex)
+        {
+            case 0:skucontent=process_desc;break;
+            case 1:skucontent=quality_desc;break;
+            case 2:skucontent=content_desc;break;
+            case 3:skucontent=price_desc;break;
+            case 4:skucontent=comment_desc;break;
+        }
+
+        $('#sku_article').html(skucontent);
+
+        $(curtab[0]).addClass('weui-bar__item_on');
+    }
+
+    //控制每次只滚动一下 3秒间隔
+    var scrollnum = 0;
+    function setscrollnum()
+    {
+        scrollnum = 0;
+    }
+    function setscrolltop()
+    {
+        $(window).scrollTop(0);
+    }
+    $(function()
+    {
+        $(window).scroll(function()
+        {
+            var scrollTop = $(this).scrollTop(); //当前滚动位置距离顶部位置
+            var scrollHeight = $(document).height(); //页面高度
+            var windowHeight = $(this).height();    //界面高度
+
+            //alert("scroll");
+            if(scrollHeight-windowHeight-scrollTop < 1 && scrollnum == 0){ //到达底部时才触发新动作
+                scrollnum = 1;
+
+                skutabindex++;
+                tabclick();
+
+                setTimeout("setscrolltop()",500);
+                setTimeout("setscrollnum()",3000);
+                //$(window).animate({scrollTop:10}, 800);
+            }
+        });
+    });
+
+    <!--手动点击tab-->
+    $(function(){
+        $('.weui-navbar__item').on('click', function () {
+            skutabindex = $(this).index();
+            tabclick();
+            $(this).addClass('weui-bar__item_on').siblings('.weui-bar__item_on').removeClass('weui-bar__item_on');
+        });
+    });
+
+</script>
+
+</body>
+</html>

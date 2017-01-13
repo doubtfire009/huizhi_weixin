@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <title>汇至美家</title>
+    <link rel="stylesheet" href="./style/weui.min.css"/>
+    <link rel="stylesheet" href="./style/mayhomer.css"/>
+    <script src="./js/zepto.min.js"></script>
+</head>
+
+<body bgcolor="#f3f3f5">
+
+<div class="weui-flex">
+    <div><div class="back"><a href="/wxphp/index.php"><img src="./images/back.png" style="width:20px;height: 15px;vertical-align: middle;"></a></div></div>
+    <div class="weui-flex__item"><div class="titlename" id ="titlename"></div></div>
+</div>
+<div class="weui-grids" id="products">
+</div>
+
+
+<script type="text/javascript">
+    var cateid;
+    if(window.localStorage)
+    {
+        var storage=window.localStorage;
+        cateid=storage["cateid"];
+    }
+
+    function product(pid)
+    {
+        if(window.localStorage)
+        {
+            var storage = window.localStorage;
+            //写入
+            storage["productid"] = pid;
+        }
+
+        location.href = "../product.html"+"?fresh="+Math.random();
+    }
+
+    $.ajax({
+        url:'./wxphp/category.php?cateid='+cateid,
+        async: false,
+        success:function(data) {
+            var obj = eval("(" + data + ")");
+            var cat_name = obj.name;
+
+            $("#titlename").html(cat_name);
+
+            var products = obj.product;
+            for(var i in products)
+            {
+                var each = products[i];
+                var item = '\
+                    <a href="javascript:void(0)" onclick="product('+each.id+')" class="weui-grid">\
+                        <div class="weui-grid__icon">\
+                        <img src='+each.logo+' alt='+each.logo+' style="width:8em;height:8em;">\
+                        </div>\
+                        <p class="weui-grid__label">'+each.title+'</p>\
+                        </a>\
+                        ';
+                $("#products").append(item);
+            }
+        }
+    });
+</script>
+</body>
+</html>

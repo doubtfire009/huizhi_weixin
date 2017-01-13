@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <title>汇至美家</title>
+    <link rel="stylesheet" href="./style/weui.min.css"/>
+    <link rel="stylesheet" href="./style/mayhomer.css"/>
+    <script src="./js/zepto.min.js"></script>
+</head>
+
+<body bgcolor="#f9f8f6" ontouchstart  onload="init()">
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script charset="utf-8" src="http://map.qq.com/api/js?v=2.exp"></script>
+<script type="text/javascript">
+    var checklbs = {
+        url:'./wxphp/index.php',
+        async: false,
+        success:function(data) {
+            var obj = eval("(" + data + ")");
+            wx.config
+            ({
+                debug: false,
+                appId: obj['appId'],
+                timestamp:obj['timestamp'] ,
+                nonceStr: obj['nonceStr'],
+                signature: obj['signature'],
+                jsApiList:
+                [
+                'getLocation'
+                ]
+            });
+
+            wx.ready(function ()
+            {
+                wx.getLocation
+                ({
+                    type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
+                    success: function (res)
+                    {
+                        latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
+                        longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
+                        codeLatLng();
+                    }
+                });
+            });
+        }
+    };
+    var geocoder = null;
+    var init = function() {
+        geocoder = new qq.maps.Geocoder({
+            complete : function(result){
+                //document.getElementById('city').innerHTML = result.detail.addressComponents.city;
+                alert(result.detail.addressComponents.city);
+            }
+        });
+    }
+    function codeLatLng() {
+        var latLng = new qq.maps.LatLng(latitude, longitude);
+        //调用信息窗口
+        //var info = new qq.maps.InfoWindow({map: map});
+        //调用获取位置方法
+        geocoder.getAddress(latLng);
+
+    }
+    window.setTimeout(function(){$.ajax(checklbs)},2000);
+</script>
+
+        <div>
+            <img src = "./images/indexheader.png">
+        　　<div style="position:absolute; z-index:2; left:0px; top:0px; width:200px;height: 2px">
+                <a class="weui-cell weui-cell_access" href="#">
+                    <div class="weui-cell__hd">
+                        <img src="./images/lbs.png" alt="" style="width:20px;margin-right:5px;display:block">
+                    </div>
+                    <div style="color:#FFF;font-size:12px;font-weight:bold">上海</div>
+                </a>
+        　　</div>
+        </div>
+        <div style="margin-top: -20px;">
+            <img src = "./images/indexpanel1.png">
+        </div>
+
+        <div>
+            <img src = "./images/indexpanel2.png">
+        </div>
+
+        <div>
+            <img src = "./images/indexpanel3.png">
+        </div>
+
+        <div>
+            <img src = "./images/indexpanel4.png">
+        </div>
+
+        <div style="height: 100px;">
+
+        </div>
+
+        <div class="weui-tab">
+            <div class="weui-tabbar">
+                <a href="#" class="weui-tabbar__item weui-bar__item_on">
+                    <img src="./images/icon_indextab1_on.png" id="img1" alt="" class="weui-tabbar__icon">
+                    <p class="weui-tabbar__label">主页</p>
+                </a>
+                <a href="#" class="weui-tabbar__item">
+                    <img src="./images/icon_indextab2.png" id="img2" alt="" class="weui-tabbar__icon">
+                    <p class="weui-tabbar__label">订单</p>
+                </a>
+                <a href="#" class="weui-tabbar__item">
+                    <img src="./images/icon_indextab3.png" id="img3" alt="" class="weui-tabbar__icon">
+                    <p class="weui-tabbar__label">会员</p>
+                </a>
+                <a href="#" class="weui-tabbar__item">
+                    <img src="./images/icon_indextab4.png" id="img4" alt="" class="weui-tabbar__icon">
+                    <p class="weui-tabbar__label">我的</p>
+                </a>
+            </div>
+        </div>
+        <script type="text/javascript">
+            $(function(){
+                $('.weui-tabbar__item').on('click', function () {
+                    var i = $(this).index();
+                    var imgon="";
+
+                    $('#img1').attr('src', "./images/icon_indextab1.png");
+                    $('#img2').attr('src', "./images/icon_indextab2.png");
+                    $('#img3').attr('src', "./images/icon_indextab3.png");
+                    $('#img4').attr('src', "./images/icon_indextab4.png");
+                    switch(i)
+                    {
+                        case 0:
+                            imgon = "./images/icon_indextab1_on.png";
+                            break;
+                        case 1:
+                            imgon = "./images/icon_indextab2_on.png";
+                            break;
+                        case 2:
+                            imgon = "./images/icon_indextab3_on.png";
+                            break;
+                        case 3:
+                            imgon = "./images/icon_indextab4_on.png";
+                            break;
+                    }
+                    $(this).children('img').attr('src', imgon);
+
+                    $(this).addClass('weui-bar__item_on').siblings('.weui-bar__item_on').removeClass('weui-bar__item_on');
+                });
+            });
+        </script>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <title>汇至美家</title>
+    <link rel="stylesheet" href="./style/weui.min.css"/>
+    <link rel="stylesheet" href="./style/mayhomer.css"/>
+    <link rel="stylesheet" href="./style/calendar.css"/>
+    <style type="text/css">
+        ul, ol, li {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+    </style>
+    <script src="./js/zepto.min.js"></script>
+</head>
+
+<body bgcolor="#f3f3f5">
+<div class="weui-flex">
+    <div><div class="back"><a href="javascript:go(-1)"><img src="./images/back.png" style="width:20px;height: 15px;vertical-align: middle;"></a></div></div>
+    <div class="weui-flex__item"><div class="placeholder" id ="titlename">订单确认</div></div>
+</div>
+
+<div class="weui-form-preview">
+    <div class="weui-form-preview__hd">
+        <div class="weui-form-preview__item">
+            <label class="weui-form-preview__label"><b>支付账单</b></label>
+        </div>
+    </div>
+    <div class="weui-form-preview__bd">
+        <div class="weui-form-preview__item">
+            <label class="weui-form-preview__label">欧式油烟机X1</label>
+            <span class="weui-form-preview__value">¥300</span>
+        </div>
+        <div class="weui-form-preview__item">
+            <label class="weui-form-preview__label">中式油烟机X2</label>
+            <span class="weui-form-preview__value">¥100</span>
+        </div>
+    </div>
+    <div class="weui-form-preview__hd">
+        <div class="weui-form-preview__item">
+            <label class="weui-form-preview__label"></label>
+            <span><b>总金额：</b></span><span class="lightfont">¥900</span>
+        </div>
+    </div>
+</div>
+<div class="weui-cells ordercells">
+    <a class="weui-cell weui-cell_access" href="javascript:;">
+        <div class="weui-cell__bd">
+            <b>优惠劵</b>
+        </div>
+        <div class="weui-cell__ft">
+            <span class="lightfont small">50元优惠劵</span>
+        </div>
+    </a>
+</div>
+
+<div class="weui-cell weui-cell_switch ordercells">
+    <div class="weui-cell__bd">
+        <b>积分折扣</b>
+    </div>
+    <div class="weui-cell__ft fixwidth">
+        <span>已有3000积分</span>
+        <label for="switchCP" class="weui-switch-cp">
+            <input id="switchCP" class="weui-switch-cp__input" type="checkbox" checked="checked">
+            <div class="weui-switch-cp__box switch"></div>
+        </label>
+    </div>
+</div>
+
+<div class="weui-cells ordercells">
+    <a class="weui-cell weui-cell_access" href="javascript:;">
+        <div class="weui-cell__bd">
+            <b>服务地址</b>
+        </div>
+        <div class="weui-cell__ft fixwidth">
+            <span>张晓明 18601925778<br>上海市浦东新区浦东大道123号2045弄3-205室</span>
+        </div>
+    </a>
+</div>
+
+<div class="weui-cells ordercells">
+    <a class="weui-cell weui-cell_access" href="javascript:;">
+        <div class="weui-cell__bd">
+            <b>服务时间</b>
+        </div>
+        <div class="weui-cell__ft">
+            <span>2016-11-12 下午 (13:00-17:00)</span>
+        </div>
+    </a>
+</div>
+
+<div class="bottom_flex">
+    <div class="weui-flex__item">
+        <div class="placeholder">
+           <span class="lightfont">¥100</span> <span class="lightfont small">9折优惠</span>
+        </div>
+    </div>
+    <div class="weui-flex__item"><div class="bottom_flex_item_div">
+        <a href="javascript:void(0)" onclick="buy(2)" class="bottom_btn">提交订单</a>
+    </div></div>
+</div>
+
+<!-- 底部弹出对话框 -->
+<div id="skudivdlg">
+    <div class="weui-mask"></div>
+    <div class="skudiv">
+        <div id="ca"></div>
+    </div>
+</div>
+<script src="./js/calendar/jquery.js"></script>
+<script src="./js/calendar/calendar.js"></script>
+<script>
+    $('#ca').calendar({
+        width: 320,
+        height: 320,
+        data: [
+            {
+                date: '2016/12/29',
+                value: '约满'
+            },
+            {
+                date: '2015/12/25',
+                value: 'Merry Christmas'
+            },
+            {
+                date: '2016/01/01',
+                value: 'Happy New Year'
+            }
+        ],
+        onSelected: function (view, date, data) {
+            console.log('view:' + view)
+            alert('date:' + date)
+            console.log('data:' + (data || 'None'));
+        }
+    });
+
+</script>
+<script type="text/javascript">
+
+    <!-- 初始时请求后台 -->
+    $.ajax({
+        url:'./wxphp/ordersure.php?fresh='+Math.random(),
+        async: false,
+        cache:false,
+        success:function(data) {
+            var obj = eval("(" + data + ")");
+        }
+    });
+
+</script>
+
+</body>
+</html>

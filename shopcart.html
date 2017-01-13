@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <title>汇至美家</title>
+    <link rel="stylesheet" href="./style/weui.min.css"/>
+    <link rel="stylesheet" href="./style/mayhomer.css"/>
+    <script src="./js/zepto.min.js"></script>
+</head>
+
+<body bgcolor="#f3f3f5">
+<div class="weui-flex">
+    <div><div class="back"><a href="javascript:void(0)" onclick="back()"><img src="./images/back.png" style="width:20px;height: 15px;vertical-align: middle;"></a></div></div>
+    <div class="weui-flex__item"><div class="placeholder" id ="titlename">购物车</div></div>
+</div>
+
+<div class ="cartdiv">
+    <div class="cartleft" id="cartcategory">
+
+    </div>
+
+    <div class="cartright" id="cartskucontent">
+
+    </div>
+</div>
+
+<div class ="cartbottom">
+    <div class="carttip" id="carttip"></div>
+    <div class="skudiv_bar">
+        <a href="javascript:void(0)" onclick="buy()" class="deal_btn2 deal_btn_current">去支付</a>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    <!-- 初始时请求后台 -->
+    var cateid;
+    var productlist = new Array();
+    if(window.localStorage)
+    {
+        var storage = window.localStorage;
+        cateid = storage["cateid"];
+    }
+
+    $.ajax({
+        url:'./wxphp/shopcart.php?cateid='+cateid+"&fresh="+Math.random(),
+        async: false,
+        cache:false,
+        success:function(data) {
+            var obj = eval("(" + data + ")");
+            if (obj.code == 200) //手机验证
+            {
+                //保存验证界面前的界面
+                if(window.localStorage)
+                {
+                    var storage = window.localStorage;
+                    //写入
+                    storage["checksuccessurl"] = './shopcart.html';
+                }
+
+                location.href = "./checkmobile.html"+"?fresh="+Math.random();
+                return;
+            }
+
+            productlist = obj.product_list;
+
+            console.log(productlist);
+
+            addcartitem();
+            clickcartitem(0); //默认第一个点击
+            calcpriceandtime(0);
+        }
+    });
+
+    <!--加入订单-->
+    function buy()
+    {
+        var request = [];
+        var len = productlist.length;
+        for (var i=0;i<len;i++) {
+            var pid = productlist[i].pid;
+            var skulist = productlist[i].skulist;
+            for (var k = 0; k < skulist.length; k++)
+            {
+                var skuid = skulist[k].skuid;
+                var skucartnums = skulist[k].skucartnums;
+                if (skucartnums > 0)
+                {
+                    var each = [];
+                    each.push(pid);
+                    each.push(skuid);
+                    each.push(skucartnums);
+                    each.push(""); //为空的brand
+                    request.push(each);
+                }
+            }
+        }
+
+        var jsonStr = JSON.stringify(request);
+
+        $.ajax({
+            url:'./wxphp/addorder.php'+"?fresh="+Math.random(),
+            type:'POST',
+            data:'data='+jsonStr,
+            dataType:'json',
+            async: false,
+            cache:false,
+            success:function(data) {
+                var obj = data;
+
+                if (obj.code == 100 || obj.code == 200)
+                {
+                    var orderid = obj.order_id;
+                    if(window.localStorage && orderid > 0)
+                    {
+                        var storage = window.localStorage;
+                        //写入
+                        storage["orderid"] = orderid;
+                    }
+                    var action = obj.action;
+                    if(window.localStorage && action != null)
+                    {
+                        var storage = window.localStorage;
+                        //写入
+                        storage["addressaction"] = action;
+                    }
+
+                    if (obj.code == 100) //到添加用户地址页
+                    {
+                        location.href = "./address.html"+"?fresh="+Math.random();
+                    }
+                    if (obj.code == 200) //到订单确认页
+                    {
+                        location.href = "./ordersure.html"+"?fresh="+Math.random();
+                    }
+                }
+                if (obj.code == 300) //有错误，返回首页
+                {
+                    location.href = "/wxphp/index.php?fresh="+Math.random();
+                }
+            }
+        });
+    }
+    <!-- 点击后退 -->
+    function back()
+    {
+        var request = [];
+        var len = productlist.length;
+        for (var i=0;i<len;i++) {
+            var pid = productlist[i].pid;
+            var skulist = productlist[i].skulist;
+            for (var k = 0; k < skulist.length; k++)
+            {
+                var skuid = skulist[k].skuid;
+                var skucartnums = skulist[k].skucartnums;
+                if (skucartnums >= 0)
+                {
+                    var each = [];
+                    each.push(pid);
+                    each.push(skuid);
+                    each.push(skucartnums);
+                    request.push(each);
+                }
+            }
+        }
+
+        //request.serializeArray();
+        var jsonStr = JSON.stringify(request);
+
+       // console.log(jsonStr);
+
+        $.ajax({
+            url:'./wxphp/updateshopcart.php'+"&fresh="+Math.random(),
+            type:'POST',
+            data:'data='+jsonStr,
+            dataType:'json',
+            async: false,
+            cache:false,
+            success:function(data) {
+                location.href = "javascript:history.go(-1);";
+            }
+        });
+    }
+
+    //购物车左边目录
+    function addcartitem()
+    {
+        for (var i=0; i<productlist.length; i++)
+        {
+            var pid = productlist[i].pid;
+            var icon = productlist[i].icon;
+            var title = productlist[i].title;
+            var totalcartnums = productlist[i].totalcartnums;
+
+            var url = "<a href=\"javascript:void(0)\" onclick=\"clickcartitem("+i+")\" class=\"cart-cate_item\" id=\""+pid+"\">";
+            var img = "<img src="+icon+" class=\"cart-cate_item_img\">";
+            var name = "<p class=\"weui-tabbar__label\">"+title+"</p>";
+            var badge = "<img src=\"./images/cartbadge.png\" style=\"width:10px;height:10px;margin:10px;display:block\">";
+            if (totalcartnums == 0)
+            {
+                badge = "";
+            }
+            var item = url + "<div class=\"cart-cate_item_icon\">"+
+                    img+"</div>"+
+                    name + badge +"</a>";
+
+            $("#cartcategory").append(item);
+        }
+    }
+
+    //购物车点击左边目录事件
+    function clickcartitem(idindex)
+    {
+        var pid = productlist[idindex].pid;
+        var curproduct = $('.cart-cate_item');
+        curproduct.siblings('.cart-cate_item_on').removeClass('cart-cate_item_on');
+
+        var l = curproduct.length;
+        for (var i=0;i<l;i++)
+        {
+            var idvalue = curproduct.attr("id");
+            if (idvalue == pid)
+            {
+                break;
+            }
+            curproduct = curproduct.next();
+        }
+        $(curproduct).first().addClass('cart-cate_item_on');
+
+        //右边内容
+        $("#cartskucontent").html(""); //先初始化内容
+        var skulist = productlist[idindex].skulist;
+        for (var k=0; k<skulist.length;k++)
+        {
+            var skuid = skulist[k].skuid;
+            var skuname = skulist[k].skuname;
+            var step_price = skulist[k].step_price;
+            var skucartnums = skulist[k].skucartnums;
+            var min_nums = skulist[k].min_nums;
+
+            var skunums = skucartnums;
+            if (skucartnums <= 0)
+            {
+                skunums = 0;
+            }
+            var sku_numsid = "sku_nums_"+pid+"_"+skuid;
+            var item = '\
+                    <div class="cartitem">\
+                    <div class="cartitemtitle">'+skuname+'</div>\
+                    <div class="weui-flex__item_left2">\
+                    <div class="cartitemprice"><span class="redprice">'+step_price+'</span>/件</div>\
+                    <div class="weui-flex_right2">\
+                    <a href="javascript:;" onclick="minusskunum('+pid+','+skuid+')" class="skuitembtn numbtn">-</a>\
+                    <span class="sku_nums" id="'+sku_numsid+'">'+skunums+'</span>\
+                    <a href="javascript:;" onclick="addskunum('+pid+','+skuid+')" class="skuitembtn numbtn">+</a>\
+                    </div>\
+                    </div>\
+                    </div>\
+                    ';
+            $("#cartskucontent").append(item);
+        }
+
+        //console.log(skulist);
+    }
+
+    //计算当前需要用的时间和价格
+    //type =0:需要计算base_price, =1不需要考虑base_price
+    function calcpriceandtime(type)
+    {
+        var totalprice=0, totaltimes=0;
+
+        var len = productlist.length;
+        var max_base_price=0;
+        for (var i=0;i<len;i++)
+        {
+            var skulist = productlist[i].skulist;
+            for (var k=0; k<skulist.length;k++)
+            {
+                var base_mins = skulist[k].base_mins;
+                var step_mins = skulist[k].step_mins;
+                var base_price = skulist[k].base_price;
+                var step_price = skulist[k].step_price;
+                var skucartnums = skulist[k].skucartnums;
+                var min_nums = skulist[k].min_nums;
+                if (max_base_price<base_price)
+                {
+                    max_base_price = base_price;
+                }
+
+                //价格
+                if (type==0) //需要考虑base_price
+                {
+                    var eachprice=Number(base_price);
+                    eachprice += Number(step_price*skucartnums);
+                    totalprice += Number(eachprice);
+                }
+                else if (type==1) //不需要考虑base_price
+                {
+                    var eachprice=Number(step_price*skucartnums);
+                    if (eachprice < 0)
+                    {
+                        eachprice = 0;
+                    }
+                    totalprice += Number(eachprice);
+                }
+
+                //时间
+                var eachtimes = Number(base_mins);
+                eachtimes += Number(step_mins*skucartnums);
+                totaltimes += Number(eachtimes);
+            }
+        }
+
+        totalprice = Number(totalprice);
+        totaltimes = Number(totaltimes);
+
+        if (type == 0 && totalprice > max_base_price) //总金额已经大于最大的base_price了则需要重新计算
+        {
+            calcpriceandtime(1);
+            return;
+        }
+
+        totaltimes1 = ((totaltimes * 0.8)/60).toFixed(1);
+        totaltimes2 = (totaltimes/60).toFixed(1);
+
+        var tip = "参考金额："+totalprice+"元 &nbsp;预计时长："+totaltimes1+"-"+totaltimes2+"小时";
+
+        $("#carttip").html(tip);
+    }
+
+    //减少sku数量
+    function minusskunum(pid, skuid)
+    {
+        var sku_numsid = "#sku_nums_"+pid+"_"+skuid;
+        var curnums = $(sku_numsid).html();
+
+        var len = productlist.length;
+        for (var i=0;i<len;i++)
+        {
+            var eachpid = productlist[i].pid;
+            var skulist = productlist[i].skulist;
+
+            var isfind = 0;
+            for (var k = 0; k < skulist.length; k++)
+            {
+                var eachskuid = skulist[k].skuid;
+                var min_nums = skulist[k].min_nums;
+                if (pid == eachpid && skuid == eachskuid)
+                {
+                    curnums--;
+                    if (curnums < 0)
+                    {
+                        curnums = 0;
+                    }
+                    if (curnums > 0 && curnums<min_nums)
+                    {
+                        curnums = 0;
+                    }
+
+                    $(sku_numsid).html(curnums);
+                    skulist[k].skucartnums = curnums;
+                    isfind = 1;
+                    break;
+                }
+            }
+            if (isfind == 1)
+            {
+                break;
+            }
+        }
+
+        calcpriceandtime(0);
+    }
+
+    //增加sku数量
+    function addskunum(pid, skuid)
+    {
+        var sku_numsid = "#sku_nums_"+pid+"_"+skuid;
+        var curnums = $(sku_numsid).html();
+
+        var len = productlist.length;
+        for (var i=0;i<len;i++)
+        {
+            var eachpid = productlist[i].pid;
+            var skulist = productlist[i].skulist;
+
+            var isfind = 0;
+            for (var k = 0; k < skulist.length; k++)
+            {
+                var eachskuid = skulist[k].skuid;
+                var min_nums = skulist[k].min_nums;
+
+                if (pid == eachpid && skuid == eachskuid)
+                {
+                    if (curnums == 0 && min_nums > 0)
+                    {
+                        curnums = min_nums;
+                    }
+                    else
+                    {
+                        curnums++;
+                    }
+
+                    $(sku_numsid).html(curnums);
+                    skulist[k].skucartnums = curnums;
+                    isfind = 1;
+                    break;
+                }
+            }
+            if (isfind == 1)
+            {
+                break;
+            }
+        }
+
+        calcpriceandtime(0);
+    }
+
+</script>
+
+</body>
+</html>

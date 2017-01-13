@@ -1,0 +1,219 @@
+html,body{height: 100%;}
+
+img{ height: auto; width: auto; width:100%;}
+
+/*标题栏一，两个元素：左中*/
+.back{position:absolute; z-index:2;margin:0px;background-color:#fff;width:35px;height:50px;line-height:50px;vertical-align: middle;text-align:center;}
+.placeholder{margin-left:0px;padding:0 5px;background-color:#fff;height:50px;width: 100%;line-height:50px;text-align:center;font-size:1.2em;font-weight:bold;color:#222}
+
+/*标题栏二，三个元素：左中右*/
+.left{margin-left:5px;padding:0 5px;background-color:#fff;width:80px;height:50px;line-height:50px;text-align:left;font-size:16px;font-weight:600;color:#222}
+.titlename{margin-left:0px;padding:0 5px;background-color:#fff;height:50px;line-height:50px;text-align:center;font-size:18px;font-weight:bold;color:#222}
+.right{margin-left:0px;padding:0 5px;background-color:#fff;width:80px;height:50px;line-height:50px;text-align:center;font-size:16px;font-weight:600;color:#222}
+.right a{color:#222;font-size:14px;font-weight:200}
+
+/*标题栏三，两个元素；中右（关闭按钮在右边）*/
+.close{margin-right:7px;padding-top:7px;padding-left:0px;width:100%;height:30px;line-height:30px;}
+
+.productlogo{margin-left:0px;padding-top:0px;padding-bottom:20px;text-align:center;}
+
+.weui-tabbar__span{text-align:center;color:#222;font-size:14px;line-height:40px;height:40px}
+.weui-navbar__item.weui-bar__item_on .weui-tabbar__span{color:#ff0000}
+.weui-navbar__item{border-bottom:1px solid #ccc;}
+.weui-navbar__item.weui-bar__item_on{border-bottom:1px solid #f00;}
+
+/*产品界面*/
+.deal_btn{position:relative;display:block;margin-left:auto;margin-right:auto;margin-bottom:5px;padding-left:14px;width:45%;height:40px;line-height:40px;padding-right:14px;box-sizing:border-box;font-size:18px;text-align:center;text-decoration:none;color:#fff;border-radius:5px;-webkit-tap-highlight-color:rgba(0,0,0,0);overflow:hidden}
+.deal_btn:after{content:" ";width:200%;height:200%;position:absolute;top:0;left:0;border:1px solid rgba(0,0,0,.2);-webkit-transform:scale(.5);transform:scale(.5);-webkit-transform-origin:0 0;transform-origin:0 0;box-sizing:border-box;border-radius:10px}
+.deal_btn-default{color:#ff5600;border:1px solid #ff5600}
+.deal_btn_current{background-color:#ff5600;color:#fff;}
+
+.skudiv{z-index: 5000;position:fixed; background-color:#fff;height:18em;width:100%;bottom:0;right:0;border:1px solid #ff5600}
+.skudiv_bar{display:-webkit-box;display:-webkit-flex;display:flex;position:absolute;z-index:500;bottom:0;width:100%;background-color:#fff}
+.deal_btn2{position:relative;display:block;margin-left:auto;margin-right:auto;margin-bottom:5px;padding-left:14px;width:90%;height:40px;line-height:40px;padding-right:14px;box-sizing:border-box;font-size:18px;text-align:center;text-decoration:none;color:#fff;border-radius:5px;-webkit-tap-highlight-color:rgba(0,0,0,0);overflow:hidden}
+
+.skutitle{margin-left:5px;color:#ff5600;font-size:0.8em;float:left;text-align:center;font-weight:bolder;width:35%;}
+.skutip{margin-left:10px;color:#999;float:left;text-align:left;font-size:0.4em;font-weight:300;width:70%;}
+.skuitem{width:100%;margin:0 auto; padding-left:15px;height:20%;line-height:20%;border-top:1px solid #ddd}
+.skuitem .weui-flex .placeholder4,.skuitem .weui-flex .placeholder{color:#888;font-size:0.9em;font-weight:bold;height:100%;display:flex;align-items:center}
+.skuitem .weui-flex{height:100%;line-height:100%}
+
+.placeholder3,.placeholder4{margin-left:0px;padding:0 5px;background-color:#fff;height:50px;line-height:50px;text-align:center;font-size:18px;font-weight:bold;color:#222}
+.weui-flex .placeholder4,.weui-flex .placeholder{margin-left:0px;background-color:#fff;padding-right: 10px;padding-left: 0px;}
+.weui-flex .weui-flex__item .placeholder3{margin-left:0px;padding: 0px;background-color:#fff;display: flex;text-align:center;font-size:18px;font-weight:bold;color:#222}
+.weui-flex__item_left{-webkit-box-flex:1;-webkit-flex:1;flex:1;height:100%;line-height:100%;margin-left:20px;display: flex;align-items:center;}
+.weui-flex__item_right{-webkit-box-flex:1;-webkit-flex:1;flex:1;height:100%;line-height:100%;margin-left:20px;display: flex;align-items:center;justify-content:flex-end}
+.skuitem .weui-flex .weui-flex__item .placeholder{text-align:left;padding-left:40px;}
+.skuitembtn2,.skuitembtn{position:relative;display:block;margin-right:8px;height:25px;line-height:25px;box-sizing:border-box;font-size:12px;text-align:center;background-color:#f3f3f5;color:#000;border-radius:5px;-webkit-tap-highlight-color:rgba(0,0,0,0);overflow:hidden;margin-top: 3px;margin-bottom: 3px;padding-top: 1px;padding-left: 10px;padding-right: 10px;padding-bottom: 1px;}
+.skuitembtn2.skuitembtn2_on,.skuitembtn.skuitembtn_on{background-color:#ff5600;color:#fff}
+.skuitembtn.numbtn{color:#000;font-size:18px;font-weight:bold}
+.placeholder2{height:25px;line-height:25px;text-align:left;padding-left:30px;}
+.weui-flex_left{width: 90%;display:flex;align-items:center;flex-wrap: wrap;align-content: center;}
+.weui-flex_right{width: 90%;display:flex;align-items:center;flex-wrap: wrap;align-content: center;justify-content:flex-end}
+.sku_nums{width:15px;margin-right:5px;text-align: center;padding:1px;}
+.cartnums.on{color:#ff5600}
+.weui-navbar.product{position: relative;}
+.weui-tab__panel.product{padding: 0.1em;}
+.weui-article.product{padding:0px;}
+.weui-tabbar.bottombtn{padding-top:0.5em;}
+
+/*购物车界面*/
+.cartdiv{display:-webkit-box;display:-webkit-flex;display:flex;margin-top:2px;position:absolute;width:100%;background-color:#f3f3f5}
+.cartleft{width:35%;background-color:#f3f3f5;}
+.cart-cate_item{display:flex;color:#999;align-items:center;padding:10px;padding-right: 0px;font-size:1em;}
+.cart-cate_item.cart-cate_item_on{background-color:#fff}
+.cart-cate_item.cart-cate_item_on .weui-tabbar__label{color:#ff5600;font-size:0.9em;font-weight: bold;}
+.cart-cate_item .weui-tabbar__label{color:#222;font-size:0.9em;}
+.cartright{width:65%;background-color:#fff;height:400px;height:auto;min-height:400px;}
+.carttip{background-color:#fff;width:100%;color:#fca77c;text-align:center;font-size:0.8em;font-weight:bold;padding-top:15px;}
+.cart-cate_item_icon{padding:5px 0;margin-right:10px;width: 25%;}
+.cart-cate_item_img{width: auto;height: auto;margin-right: 5px;display: block;max-width: 70%; max-height: 70%;}
+.cartbottom{background-color:#fff;position:absolute;bottom:0;width:100%;height:100px;}
+.cartitem{margin-top:30px;margin-left:15px;width:100%}
+.cartitemtitle{color:#222;background-color:#fff;text-align:left;font-size:0.9em}
+.weui-flex__item_left2{-webkit-box-flex:1;-webkit-flex:1;flex:1;height:100%;line-height:100%;display: flex;align-items:center;}
+.weui-flex_right2{width: 60%;display:flex;align-items:center;flex-wrap: wrap;align-content: center;justify-content:flex-end}
+.cartitemprice{color:#222;background-color:#fff;text-align:left;font-size:0.9em;width:30%}
+.redprice{color:#ff5600;font-weight:bold;}
+
+/*手机验证界面*/
+.checkblank{margin: 20px;padding: 10px;}
+.checkmobileinput{background-color: #fff;margin: 20px;padding: 10px; margin-bottom: 5px;}
+.checkmobileinput2{background-color: #fff;margin: 20px;margin-right:0px;padding: 10px;}
+.checkmobilecell{display: flex;-webkit-align-items: center;margin-right:20px;}
+.checkmobilebtn{margin-bottom:5px;padding-left:14px;height:40px;line-height:40px;padding-right:14px;font-size:0.8em;text-align:center;text-decoration:none;border-radius:5px;background-color: #ff5600; color: #fff;border: 1px #ccc solid;width:100%;}
+.checkmobilebtn.disable{background-color: #ccc;}
+.checkmobilebtncell{text-align: right;color: #999;padding-top: 2px;background-color: #fff;width: 50%;}
+.checkmobilebtnbar{bottom: 0;width: 100%;background-color: #f3f3f5;margin-top:30px;text-align:center} 
+.checkmobiledealbtn{position:relative;display:block;margin-left:auto;margin-right:auto;margin-bottom:5px;padding-left:14px;width:88%;height:40px;line-height:40px;padding-right:14px;box-sizing:border-box;font-size:1em;text-align:center;text-decoration:none;color:#222;background-color:#f9a47b;border-radius:5px;-webkit-tap-highlight-color:rgba(0,0,0,0);overflow:hidden}
+
+/*订单确认界面*/
+.weui-cell__ft span{color:#999;font-size: 1.0em;padding-right:0.5em;}
+.lightfont{font-style: normal;font-size: 1.2em;font-weight:bold;color:#ff5600;}
+.lightfont.small{font-size: 0.7em;font-weight:bold;color:#ff8e54;}
+.weui-cells.ordercells{margin-top: 0.2em;}
+.weui-cell__ft.fixwidth{width:70%;display: flex;justify-content: flex-end;align-items: center;}
+.weui-cell.weui-cell_switch.ordercells{background-color: #fff;margin-top: 0.2em;line-height: 2em;}
+.weui-cell__bd.fixwidth{width:30%;}
+.weui-switch-cp__box.switch{width:2.5em;height:1.6em;border-radius:1em;}
+.weui-switch-cp__box.switch:after{width:1.6em;height:1.6em;border-radius:0.8em;}
+.bottom_flex{background-color: #fff;display: flex;position: fixed;bottom: 0;width: 100%;}
+.bottom_flex_item_div{background-color: #fff;height: 3em;font-size: 1.1em;font-weight: bold;text-align: center;justify-content: center;align-items: center;display: -webkit-flex;}
+.bottom_btn{display: block;height: 2em;line-height: 2em;font-size: 1em;text-align: center;color: #fff;border-radius: 5px;background-color: #ff5600;color: #fff;width: 8em;}
+.weui-cells.ordercells.bottom{margin-bottom: 1em;}
+.timediv{z-index: 5000;position:fixed; background-color:#f5f5f5;width:100%;bottom:0;right:0;border:1px solid #ff5600}
+.weui-form-preview__label,.weui-form-preview__value{font-size:1.2em;}
+
+/*订单地址界面*/
+.weui-cells.orderaddrcells{margin:1em;padding:0.5em;border-radius: 5px;}
+.orderaddrcells2{margin:1em;padding:0.5em;border-radius: 5px;}
+.orderaddrcellsdefault{margin:1em;padding:0.5em;border-radius: 5px;background:url('/images/addrbackgroud.png') no-repeat;background-size:cover;}
+.weui-cell__bd.addaddr{align-items: center;display: -webkit-flex;}
+
+/*订单编辑地址界面*/
+.weui-form-preview__hd.orderaddrtip{margin-top: 0.1em;padding:1.0em;padding-left:2em;border-radius: 5px;font-size:0.9em;color:#999;text-align: left;}
+.weui-cell__hd{font-size:0.8em;}
+.weui-label.left{text-align: left;width: 6em;font-size: 1.0em;}
+.weui-cell.cell_item{padding:0px;}
+.weui-input{font-size: 1.1em;}
+.weui-cell.weui-cell_access.choicecity{padding:0px;}
+.weui-form-preview__hd.btn{background-color: #f3f3f5;}
+.skudiv_bar.btn{position: relative;background-color: #f3f3f5;}
+.weui-form-preview__hd.btn:after{border-bottom: 0px}
+
+/*选择区域*/
+.weui-cell.weui-check__label{padding-left:2em;}
+.weui-cell__hd.radio{width: 5em;text-align: right;padding-right:1em;}
+.weui-cell__bd.region{text-align: left;padding-left: 0.5em;}
+.weui-cells.weui-cells_checkbox.choiceaddr:before{border-top: 0px}
+.weui-cell.weui-check__label:before{border-top: 0px}
+.weui-cells_checkbox .weui-check:checked+.weui-icon-checked.checked:before{color: #ff5600;}
+.addresstip{bottom: 0;width: 100%;background-color: #f3f3f5;text-align:center;height:5em;} 
+
+/*选择时间*/
+.timediv_bar{display:-webkit-box;display:-webkit-flex;display:flex;position:absolute;z-index:500;bottom:0;padding-top:0.5em;width:100%;background-color:#f5f5f5}
+.time_btn{display:block;line-height:2em;height:4em;font-size:0.6em;text-align:center;border-radius:5px;background-color:#fff;color:#222;}
+.time_btn.time_btn_current{background-color:#ff5600;color:#fff;}
+.time_btn.time_btn_disable{background-color:#ddd;color:#999;}
+.weui-flex__timeitem{flex: 1;margin: 0.5em;}
+
+/*支付界面*/
+.weui-form-preview__hd.paylefttime{background-color:#f3f3f5; text-align:center; font-size: 1.0em;}
+.paylefttime{min-width: 4em;color: #999;display: flex;align-items: flex-end;justify-content: center;}
+.paylefttime span{font-weight:bold;font-size: 1.8em;margin-left: 1em;}
+.weui-form-preview__label.conpon{ min-width: 1em;}
+.weui-form-preview__item {overflow: hidden;min-height: 2.2em;}
+.weui-form-preview__bd:after {content: " ";position: absolute;height: 1px;border-bottom: 1px solid #d9d9d9;color: #d9d9d9;transform-origin: 0 100%;transform: scaleY(.5);left: 15px;right: 15px;}
+.weui-form-preview__hd.total{padding:0 15px;}
+.bottom_btn.pay_btn{width:17em;}
+.weui-form-preview__item.detail{padding-left: 2em;padding-right: 1em;font-size:1.0em; min-height: 2.5em;}
+.weui-form-preview.paymode{margin-top:2em;}
+.weui-form-preview__hd.head{padding: 3px 15px;}
+.weui-form-preview__label.head{color:#222;}
+.weui-form-preview__bd.paymode{padding:0px;padding-bottom: 5em;}
+.weui-media-box__title.paymode{text-align:left;font-size:1.0em;}
+.weui-media-box__desc.paymode{text-align:left;font-size:0.9em;}
+.weui-media-box__hd.paymode{margin-right: .4em;width:4.0em;}
+.weui-cells_checkbox.paymode{ overflow: scroll;padding-top: 1em;}
+.weui-cell.weui-check__label.paymode{padding:0px;}
+.weui-cell__hd.paymode{ width: 2em;text-align: right;padding-right:.5em;margin-left:.5em;}
+
+/*order.html*/
+.weui-navbar.ordermenu{position: relative;}
+.weui-form-preview.orderbody{margin:1em;}
+.orderstatus {height: 4em;}
+.weui-media-box__bd.catname{float: left;}
+.weui-media-box__title.catename{color:#222;text-align: left;font-size:1.3em;}
+.weui-form-preview__bd.orderhead:after {left: 0px;right: 0px;margin-top: 5px;}
+.weui-form-preview__item.skudetail{padding-right: 1em;font-size:1.1em; min-height: 2.5em;}
+.weui-form-preview__bd.skulist:after {left: 0px;right: 0px;margin-top: 5px;}
+.weui-form-preview__hd.total2:after {left: 0px;right: 0px;}
+.weui-form-preview__hd.total2{text-align: left;font-size: 0.9em;color: #222;height: 3em;}
+.bottom_btn.orderpay{width: 6.5em;}
+.bottom_flex_item_div.paybtn{float: right;}
+.weui-media-box__desc.ordertime{text-align:left;font-size:1.1em;}
+.weui-cells_checkbox.paystatus{float: right;}
+.paystatus{font-size: 1.0em;text-align:right;height: 3.5em;line-height: 3.5em;}
+
+/*orderdetail.html*/
+.weui-slider__inner.timeline{position: relative;height: 2px;background-color: #ccc;}
+.weui-slider__track.pretime{height: 2px;background-color: #ff6500; width: 0;}
+.weui-slider__handler.dot_on{position: absolute; width: 0.8em;height: 0.8em;margin-top: -0.4em;border-radius: 50%;background-color: #ff6500;box-shadow: 0 0 0px rgba(0,0,0,0);}
+.weui-slider__handler.dot{position: absolute; width: 0.8em;height: 0.8em;margin-top: -0.4em;border-radius: 50%;background-color: #ccc;box-shadow: 0 0 0px rgba(0,0,0,0);}
+.weui-slider.timeline{padding: 3em 2em;padding-bottom:.2em;border-top: 1px solid #ccc;background-color: #fff;}
+.point{color:#ccc;font-size:0.8em;}
+.point_on{color:#ff6500;font-size:0.3em;}
+.weui-slider.pointdiv{height:0px;padding: 0.6em 0px;position: relative;}
+.weui-slider.mandiv {padding: 0px;position: relative;}
+.weui-form-preview__bd.orderdetail{padding: 1em 0em;margin-top: 2.0em;font-size: .9em;text-align: right;color: #999;width: 110%;line-height: 2;margin-left: -1em;border-top: 1px solid #ccc}
+.weui-form-preview__bd.orderdetail::after{height: 0px;color:#fff;border-bottom: 0px solid #fff; }
+.weui-form-preview__item.orderdetail{padding-right: 1em;font-size:1.0em; min-height: 2.0em;text-align:left;display:flex}
+.weui-slider.orderstatus{background-color: #fff;margin-top: 1.0em;padding: 0.7em 1em;height:2em;}
+.weui-form-preview__item.orderstatus{font-size: 1.0em;min-height: 2.5em;line-height: 2.5em;height: 2.5em;text-align: left;display: flex;}
+.weui-form-preview.skulist{margin-top:1em;}
+.weui-form-preview__item.skuprice{font-size: 1.0em;}
+.weui-form-preview__hd.skuprice{padding: 0 15px;font-size: 1.0em;}
+.weui-form-preview__bd.skuprice{padding: 1em 1.2em;}
+.bottom_btn.orderchange{background-color: #fff;border-radius: 2px;border: 1px solid #ff6500;color: #ff6500;width: 90%;font-weight:300;}
+.bottom_btn.ordercancel{background-color: #fff;border-radius: 2px;border: 1px solid #ccc;color: #ccc;width: 90%;font-weight:300;}
+.bottom_btn.orderagain{background-color: #fff;border-radius: 2px;border: 1px solid #222;color: #222;width: 90%;font-weight:300;}
+.bottom_btn.ordercomment{background-color: #fff;border-radius: 2px;border: 1px solid #ff6500;color: #ff6500;width: 90%;font-weight:300;}
+
+/*评价窗口*/
+.weui-dialog__hd.closebtn{float:right;}
+.review-main{top: 50%;left: 50%;position: fixed;width: 70%;height: 65%;min-height:10em;max-width: 300px;z-index: 5000;-webkit-transform: translate(-50%,-50%);}
+.review-dialog{background-color: #fff;text-align: center;border-radius: 3px;overflow: scroll;height: 100%;}
+.review-badge{display: inline-block;padding: .3em .4em;min-width: 1em; border-radius: 18px;background-color: #222;color: #fff;line-height: 1.2;text-align: center;font-size: 12px;vertical-align: middle;}
+.weui-dialog__hd.tip{padding:.2em 1.6em .2em;}
+.weui-dialog__title.tip{font-size:0.9em;}
+.weui-dialog__title.productname{font-size:1.0em;color:#222;font-weight:bold;}
+.weui-form-preview__bd.review{padding: 0px;padding-bottom: 5em;border-top: 1px solid #d9d9d9;}
+.weui-form-preview__bd.review:after{border-bottom: 0px solid #fff;}
+.weui-media-box__hd.review{margin: 1.1em;text-align: center;}
+.bottom_btn.review{background-color: #fff;border-radius: 2px;border: 1px solid #999;color: #999;font-weight: 300;margin: .3em;font-size: 0.7em;}
+.bottom_btn.review_on{background-color: #ff5600;border-radius: 2px;border: 1px solid #ff5600;color: #fff;font-weight: 300;margin: .3em;font-size: 0.7em;}
+.bottom_flex_item_div.review{height:2em;}
+.bottom_flex_item_div.review2{height:7em;}
+.weui-textarea.review{background-color: #ddd; width: 15.6em; padding: 0.2em;border:1px solid #ddd}
+.bottom_flex_item_div.reviewbtn{height: 2.5em;}
+.bottom_btn.reviewbtn{display: block;height: 2.5em;line-height: 2.5em;border-radius: 0px;font-size: 1em;text-align: center;color: #fff; background-color: #ff5600;color: #fff;width: 100%;}

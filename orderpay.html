@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <title>汇至美家</title>
+    <link rel="stylesheet" href="./style/weui.min.css"/>
+    <link rel="stylesheet" href="./style/mayhomer.css"/>
+    <style type="text/css">
+        ul, ol, li {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+    </style>
+    <script src="./js/zepto.min.js"></script>
+</head>
+
+<body bgcolor="#f3f3f5">
+<div class="weui-flex">
+    <div><div class="back"><a href="./order.html"><img src="./images/back.png" style="width:20px;height: 15px;vertical-align: middle;"></a></div></div>
+    <div class="weui-flex__item"><div class="titlename" id ="titlename">支付</div></div>
+</div>
+
+<div class="weui-form-preview">
+    <div class="weui-form-preview__hd paylefttime">
+        <div class="weui-form-preview__item">
+            <label class="paylefttime">剩余支付时间 <span id="paylefttime">00:30:00</span></label>
+        </div>
+    </div>
+    <div class="weui-form-preview__hd head">
+        <div class="weui-form-preview__item">
+            <label class="weui-form-preview__label head"><b>账单信息</b></label>
+        </div>
+    </div>
+    <div class="weui-form-preview__bd" id="skulist">
+
+    </div>
+    <div class="weui-form-preview__hd total">
+        <div class="weui-form-preview__item detail">
+            <label class="weui-form-preview__label"></label>
+            <span><b>总金额： </b></span><span class="lightfont" id="totalprice"></span>
+        </div>
+    </div>
+</div>
+
+
+<div class="weui-form-preview paymode">
+    <div class="weui-form-preview__hd head">
+        <div class="weui-form-preview__item">
+            <label class="weui-form-preview__label head"><b>支付方式</b></label>
+        </div>
+    </div>
+    <div class="weui-form-preview__bd paymode">
+        <a href="javascript:void(0);" class="weui-media-box weui-media-box_appmsg">
+            <div class="weui-media-box__hd paymode">
+                <img class="weui-media-box__thumb" src="./images/wechat.png" style="width:2.5em;height:2.5em;vertical-align: middle;">
+            </div>
+            <div class="weui-media-box__bd">
+                <h4 class="weui-media-box__title paymode">微信支付</h4>
+                <p class="weui-media-box__desc paymode">推荐安装微信5.0版本以上用户使用</p>
+            </div>
+            <div class="weui-cells_checkbox paymode" id="zonelist">
+                <label class="weui-cell weui-check__label paymode" for="s11">
+                    <div class="weui-cell__hd paymode">
+                        <input type="radio" class="weui-check" name="checkbox1" id="s11" checked="checked" disabled>
+                        <i class="weui-icon-checked checked"></i>
+                    </div>
+                </label>
+            </div>
+        </a>
+    </div>
+</div>
+
+<div class="bottom_flex">
+    <div class="weui-flex__item"><div class="bottom_flex_item_div">
+        <a href="javascript:void(0)" onclick="pay()" class="bottom_btn pay_btn">支付</a>
+    </div></div>
+</div>
+
+
+<script src="./js/calendar/jquery.js"></script>
+<script src="./js/calendar/calendar.js"></script>
+<script>
+
+    var maxlefttime = 60*30;//最大30分钟倒计时
+    var timerid = 0
+    function lefttime()
+    {
+        if (maxlefttime <= 0) //触发上报，取消订单
+        {
+            clearInterval(timerid);
+            maxlefttime = 0;
+            cancelorder();
+        }
+        maxlefttime--;
+        var mins = PrefixInteger(parseInt(maxlefttime/60),2);
+        var secs = PrefixInteger(maxlefttime%60,2);
+        var left = "00"+":"+mins+":"+secs;
+        $('#paylefttime').html(left);
+
+    }
+
+    //数字前补0
+    function PrefixInteger(num, n)
+    {
+        return (Array(n).join(0) + num).slice(-n);
+    }
+
+    function cancelorder()
+    {
+        $.ajax({
+            url:'./wxphp/ordercancel.php?fresh='+Math.random()+"&orderid="+orderid,
+            async: false,
+            cache:false,
+            success:function(data) {
+                var obj = data;
+
+                //返回order.html
+                location.href = "./order.html"+"?fresh="+Math.random();
+            }
+        });
+    }
+
+    //支付
+    function pay()
+    {
+
+    }
+
+    <!-- 初始时请求后台 -->
+    var orderid;
+    if(window.localStorage)
+    {
+        var storage = window.localStorage;
+        orderid = storage["orderid"];
+    }
+
+    $.ajax({
+        url:'./wxphp/orderpay.php?fresh='+Math.random()+"&orderid="+orderid,
+        async: false,
+        cache:false,
+        success:function(data) {
+            var obj = eval("(" + data + ")");
+
+            maxlefttime = obj.maxlefttime;
+            timerid = setInterval('lefttime()',1000);
+
+            var payment_need = obj.payment_need;
+            $('#totalprice').html('¥'+payment_need);
+
+            var skulist = obj.sku_list;
+            for(var i in skulist)
+            {
+                var each = skulist[i];
+                var skuname = each.sku_name;
+                var skunums = each.product_num;
+                var skuprice = each.product_price;
+
+                var item ='\
+                       <div class="weui-form-preview__item detail">\
+                            <label class="weui-form-preview__label">'+skuname+'X'+skunums+'</label>\
+                            <span class="weui-form-preview__value">¥'+skuprice+'</span>\
+                        </div>';
+                $('#skulist').append(item);
+            }
+        }
+    });
+
+</script>
+
+</body>
+</html>
